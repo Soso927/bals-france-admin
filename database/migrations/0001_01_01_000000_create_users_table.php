@@ -17,6 +17,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // cette colonne booléenne distingue un admin d'un visiteur normal.
+            // default(false) signifie que tout nouvel utilisateur créé sans 
+            // préciser is_admin sera automatiquement considéré comme non-admin 
+            // Seul le compte créé par adminSeeder aura cette valeur à true.
+            $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

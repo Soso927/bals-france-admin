@@ -2,22 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // L'ordre ici est non négociable.
+        // AdminSeeder en premier car il ne dépend de rien.
+        // RegionSeeder en second car les agents ont besoin des régions.
+        // AgentSeeder en dernier car il référence les ids des régions.
+        $this->call([
+            AdminSeeder::class,
+            RegionSeeder::class,
+            AgentSeeder::class,
         ]);
     }
 }
