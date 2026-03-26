@@ -11,11 +11,13 @@ return new class extends Migration
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('region_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('name');
+            $table->string('agence')->nullable();
+            $table->string('nom');
+            $table->string('depts');
+            $table->string('tel', 50);
+            $table->string('tel_raw', 50);
             $table->string('email')->nullable();
-            $table->string('phone', 50)->nullable();
-            $table->string('city')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->unsignedInteger('order')->default(0);
             $table->timestamps();
         });
     }

@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('code', 10)->nullable()->unique();
             $table->string('slug')->nullable()->unique();
+            $table->string('zone')->nullable();
+            $table->string('color', 7)->nullable();
             $table->timestamps();
         });
     }
