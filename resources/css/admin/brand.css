@@ -1,0 +1,11 @@
+/**
+ * ═══════════════════════════════════════════════════════════
+ * BRAND STYLES — Éléments de marque Bals
+ * ═══════════════════════════════════════════════════════════
+ */
+
+/* Barre bleue→rouge caractéristique en haut de page */
+.brand-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--bals-blue) 70%, var(--bals-red) 100%);
+}

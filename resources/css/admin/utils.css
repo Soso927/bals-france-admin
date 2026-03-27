@@ -1,0 +1,26 @@
+/**
+ * ═══════════════════════════════════════════════════════════
+ * ERROR MESSAGES STYLES
+ * ═══════════════════════════════════════════════════════════
+ */
+
+.error-box {
+    background: rgba(237, 28, 36, 0.1);
+    border: 1px solid rgba(237, 28, 36, 0.2);
+    color: #fecaca;
+}
+
+/**
+ * Lock icon circle
+ */
+.lock-icon-circle {
+    background: rgba(0, 149, 218, 0.1);
+    border: 1px solid rgba(0, 149, 218, 0.2);
+}
+
+/**
+ * Subtitle text
+ */
+.subtitle-text {
+    color: #64748b;
+}
