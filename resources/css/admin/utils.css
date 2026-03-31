@@ -7,7 +7,7 @@
 .error-box {
     background: rgba(237, 28, 36, 0.1);
     border: 1px solid rgba(237, 28, 36, 0.2);
-    color: #fecaca;
+    color: var(--bals-red);
 }
 
 /**
@@ -22,5 +22,5 @@
  * Subtitle text
  */
 .subtitle-text {
-    color: #64748b;
+    color: var(--bals-light-grey);
 }

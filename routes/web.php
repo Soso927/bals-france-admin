@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AgentController;
+use App\Http\Controllers\Api\RegionController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -32,11 +34,11 @@ Route::view('dashboard', 'dashboard')
 //     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 // });
 
-withMiddleware(function (Middleware $middleware){
-    $middleware->alias([
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
-    ]);
-});
+// withMiddleware(function (Middleware $middleware){
+//     $middleware->alias([
+//         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+//     ]);
+// });
 
 // ══════════════════════════════════════════════════════════
 // ROUTES PUBLIQUES ADMIN — connexion/déconnexion
@@ -60,13 +62,16 @@ Route::prefix('admin')->group(function () {
     // ROUTES PROTÉGÉES — accessibles uniquement aux admins
     // Le middleware 'admin' bloque quiconque n'est pas admin
     // ══════════════════════════════════════════════════════
-    Route::middleware('admin')->group(function () {
+   
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-        // GET /admin/dashboard → tableau de bord principal
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
-    });
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    Route::apiResource('agents', AgentController::class)->except(['create', 'edit']);
+    Route::apiResource('regions', RegionController::class)->only(['index', 'show']);
+});
 
 
 require __DIR__.'/auth.php';

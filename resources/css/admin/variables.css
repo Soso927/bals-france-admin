@@ -7,8 +7,9 @@
 :root {
     --bals-blue: #0095DA;
     --bals-red: #ED1C24;
-    --bals-black: #1A1A1A;
-    --bals-grey-light: #F4F6F8;
+    --bals-black: #000000;
+    --bals-light-grey: #B3B3B3;
+    --bals-grey-light: var(--bals-light-grey);
 }
 
 * {
@@ -19,5 +20,6 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: var(--bals-black);
+    background: linear-gradient(180deg, #ffffff 0%, #f7f7f7 72%, var(--bals-light-grey) 100%);
 }

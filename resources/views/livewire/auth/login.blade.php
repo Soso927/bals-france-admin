@@ -20,7 +20,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     public bool $remember = false;
 
     /**
-     * Handle an incoming authentication request.
+     * Traiter une demande d'authentification entrante.
      */
     public function login(): void
     {
@@ -43,7 +43,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     }
 
     /**
-     * Ensure the authentication request is not rate limited.
+     * Vérifier que la demande d'authentification ne soit pas limitée par débit.
      */
     protected function ensureIsNotRateLimited(): void
     {
@@ -64,25 +64,27 @@ new #[Layout('components.layouts.auth')] class extends Component {
     }
 
     /**
-     * Get the authentication rate limiting throttle key.
+     * Obtenir la clé de limitation du débit d'authentification.
      */
     protected function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
     }
-}; ?>
+ };
+
+?>
 
 <div class="flex flex-col gap-6">
     <x-auth-header title="Log in to your account" description="Enter your email and password below to log in" />
 
-    <!-- Session Status -->
+    <!-- Statut de la session -->
     <x-auth-session-status class="text-center" :status="session('status')" />
 
     <form wire:submit="login" class="flex flex-col gap-6">
-        <!-- Email Address -->
+        <!-- Adresse e-mail -->
         <flux:input wire:model="email" label="{{ __('Email address') }}" type="email" name="email" required autofocus autocomplete="email" placeholder="email@example.com" />
 
-        <!-- Password -->
+        <!-- Mot de passe -->
         <div class="relative">
             <flux:input
                 wire:model="password"
@@ -101,7 +103,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             @endif
         </div>
 
-        <!-- Remember Me -->
+        <!-- Se souvenir de moi -->
         <flux:checkbox wire:model="remember" label="{{ __('Remember me') }}" />
 
         <div class="flex items-center justify-end">
@@ -110,7 +112,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     </form>
 
     <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Don't have an account?
-        <x-text-link href="{{ route('register') }}">Sign up</x-text-link>
+        Vous n'avez pas de compte ?
+        <x-text-link href="{{ route('register') }}">S'inscrire</x-text-link>
     </div>
 </div>
