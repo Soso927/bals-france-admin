@@ -15,7 +15,7 @@ class AgentSeeder extends Seeder
         // plutôt que de deviner quel id MySQL a attribué à chaque région.
         // Cette technique rend le seeder robuste : il fonctionnera toujours
         // correctement même après un migrate:fresh qui réassigne les ids.
-        $regions = Region::all()->keyBy('name');
+        $regions = Region::all()->keyBy('nom');
 
         $agents = [
 

@@ -10,11 +10,9 @@ return new class extends Migration
     {
         Schema::create('regions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('code', 10)->nullable()->unique();
-            $table->string('slug')->nullable()->unique();
+            $table->string('nom');
             $table->string('zone')->nullable();
-            $table->string('color', 7)->nullable();
+            $table->string('couleur', 7)->nullable();
             $table->timestamps();
         });
     }

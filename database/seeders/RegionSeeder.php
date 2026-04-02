@@ -21,26 +21,26 @@ class RegionSeeder extends Seeder
         // Chaque entrée contient 'nom' (clé de l'ancien JS) et 'zone'
         // (valeur du champ 'zone' dans l'ancien objet).
         $regions = [
-            ['name' => 'Normandie',                    'zone' => 'NORMANDIE'],
-            ['name' => 'Bretagne',                     'zone' => 'BRETAGNE'],
-            ['name' => 'Pays de la Loire',             'zone' => 'PAYS DE LA LOIRE'],
-            ['name' => 'Centre-Val de Loire',          'zone' => 'VAL DE LOIRE'],
-            ['name' => 'Île-de-France',                'zone' => 'ÎLE-DE-FRANCE'],
-            ['name' => 'Hauts-de-France',              'zone' => 'HAUTS-DE-FRANCE'],
-            ['name' => 'Grand Est',                    'zone' => 'GRAND EST'],
-            ['name' => 'Bourgogne-Franche-Comté',      'zone' => 'BOURGOGNE FRANCHE-COMTÉ'],
-            ['name' => 'Auvergne-Rhône-Alpes',         'zone' => 'AUVERGNE-RHÔNE-ALPES'],
-            ['name' => 'Nouvelle-Aquitaine',           'zone' => 'NOUVELLE-AQUITAINE'],
-            ['name' => 'Occitanie',                    'zone' => 'OCCITANIE'],
-            ['name' => "Provence-Alpes-Côte d'Azur",  'zone' => 'MÉDITERRANÉE'],
-            ['name' => 'Corse',                        'zone' => 'MÉDITERRANÉE'],
+            ['nom' => 'Normandie',                    'zone' => 'NORMANDIE'],
+            ['nom' => 'Bretagne',                     'zone' => 'BRETAGNE'],
+            ['nom' => 'Pays de la Loire',             'zone' => 'PAYS DE LA LOIRE'],
+            ['nom' => 'Centre-Val de Loire',          'zone' => 'VAL DE LOIRE'],
+            ['nom' => 'Île-de-France',                'zone' => 'ÎLE-DE-FRANCE'],
+            ['nom' => 'Hauts-de-France',              'zone' => 'HAUTS-DE-FRANCE'],
+            ['nom' => 'Grand Est',                    'zone' => 'GRAND EST'],
+            ['nom' => 'Bourgogne-Franche-Comté',      'zone' => 'BOURGOGNE FRANCHE-COMTÉ'],
+            ['nom' => 'Auvergne-Rhône-Alpes',         'zone' => 'AUVERGNE-RHÔNE-ALPES'],
+            ['nom' => 'Nouvelle-Aquitaine',           'zone' => 'NOUVELLE-AQUITAINE'],
+            ['nom' => 'Occitanie',                    'zone' => 'OCCITANIE'],
+            ['nom' => "Provence-Alpes-Côte d'Azur",  'zone' => 'MÉDITERRANÉE'],
+            ['nom' => 'Corse',                        'zone' => 'MÉDITERRANÉE'],
         ];
 
         // firstOrCreate évite les doublons si tu relances le seeder :
         // il vérifie d'abord si la région existe avant de l'insérer.
         foreach ($regions as $regionData) {
             Region::firstOrCreate(
-                ['name' => $regionData['name']],
+                ['nom' => $regionData['nom']],
                 ['zone' => $regionData['zone']]
             );
         }
