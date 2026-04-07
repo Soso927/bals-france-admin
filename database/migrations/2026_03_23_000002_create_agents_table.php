@@ -10,14 +10,19 @@ return new class extends Migration
     {
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('region_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('agence')->nullable();
-            $table->string('nom');
-            $table->string('depts');
-            $table->string('tel', 50);
-            $table->string('tel_raw', 50);
-            $table->string('email')->nullable();
-            $table->unsignedInteger('order')->default(0);
+
+            // Clé étrangère : chaque agent appartient à une région
+            // C'est ici que tu démontres la relation entre deux tables au jury
+            $table->foreignId('region_id')
+                  ->constrained('regions')       // FOREIGN KEY vers regions.id
+                  ->cascadeOnDelete();           // Si on supprime une région, ses agents sont supprimés
+
+            $table->string('agence', 150)->nullable(); // Optionnel (certains agents n'ont pas d'agence)
+            $table->string('nom', 150);
+            $table->string('departement', 255);          // Ex: "Dépt. 75, 78, 92"
+            $table->string('tel', 20);             // Numéro formaté pour l'affichage
+            $table->string('tel_raw', 20);         // Numéro brut pour le lien tel:+33...
+            $table->string('email', 255);
             $table->timestamps();
         });
     }

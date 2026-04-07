@@ -47,15 +47,15 @@
             padding: 12px 16px;
             border: 1px solid #334155;
             border-radius: 8px;
-            background: #1e293b;    /* Fond sombre pour les champs */
-            color: #f1f5f9;         /* Texte clair sur fond sombre */
+            background: white;    /* Fond sombre pour les champs */
+            color: black;         /* Texte clair sur fond sombre */
             font-size: 14px;
             font-family: 'Exo 2', sans-serif;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .input-field::placeholder {
-            color: #64748b;         /* Placeholder grisé */
+            color: black;         /* Placeholder grisé */
         }
 
         /* Quand l'utilisateur clique dans un champ :

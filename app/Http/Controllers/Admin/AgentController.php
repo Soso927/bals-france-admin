@@ -72,7 +72,7 @@ class AgentController extends Controller
             'nom'    => 'required|string|max:255',
             'email'  => 'required|email|max:255',
             'agence' => 'nullable|string|max:255',
-            'depts'  => 'nullable|string|max:255',
+            'departement'  => 'nullable|string|max:255',
             'tel'    => 'nullable|string|max:20',
             'tel_raw'=> 'nullable|string|max:20',
         ]);
@@ -135,7 +135,7 @@ class AgentController extends Controller
             'nom'    => 'sometimes|required|string|max:255',
             'email'  => 'sometimes|required|email|max:255',
             'agence' => 'nullable|string|max:255',
-            'depts'  => 'nullable|string|max:255',
+            'departement'  => 'nullable|string|max:255',
             'tel'    => 'nullable|string|max:20',
             'tel_raw'=> 'nullable|string|max:20',
         ]);

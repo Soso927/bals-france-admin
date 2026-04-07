@@ -34,7 +34,7 @@ class Region extends Model
             'agents'=> $this->agents->map(fn($agent) => [
                 'agence' => $agent->agence,
                 'nom'=> $agent->nom,
-                'depts'=> $agent->depts,
+                'departement'=> $agent->departement,
                 'tel'=> $agent->tel,
                 'telRaw' => $agent->tel_raw,
                 'email' => $agent->email,

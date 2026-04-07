@@ -1,78 +1,45 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminAuthController;
-use App\Http\Controllers\Admin\AgentController;
-use App\Http\Controllers\Api\RegionController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
+// ══════════════════════════════════════════════════════════
+// PAGE D'ACCUEIL — site public
+// ══════════════════════════════════════════════════════════
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware('guest')->group(function () {
-        Route::get('login', [AdminAuthController::class, 'create'])->name('login');
-        Route::post('login', [AdminAuthController::class, 'store'])->name('authenticate');
-    });
-
-    Route::middleware(['auth', 'admin'])->group(function () {
-        Route::view('dashboard', 'admin.dashboard')->name('dashboard');
-        Route::post('logout', [AdminAuthController::class, 'destroy'])->name('logout');
-    });
-});
-
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-// Route::middleware(['auth'])->group(function () {
-//     Route::redirect('settings', 'settings/profile');
-
-//     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
-//     Volt::route('settings/password', 'settings.password')->name('settings.password');
-//     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
-// });
-
-// withMiddleware(function (Middleware $middleware){
-//     $middleware->alias([
-//         'admin' => \App\Http\Middleware\AdminMiddleware::class,
-//     ]);
-// });
+// ══════════════════════════════════════════════════════════
+// CARTE INTERACTIVE — accessible à tous les visiteurs
+// ══════════════════════════════════════════════════════════
+Route::get('/france-map', function () {
+    return view('france-map');
+})->name('france-map');
 
 // ══════════════════════════════════════════════════════════
-// ROUTES PUBLIQUES ADMIN — connexion/déconnexion
-// Accessibles sans être connecté
+// AUTHENTIFICATION — gérée entièrement par Livewire Volt
+// Le fichier auth.php est généré automatiquement par le
+// starter kit. Il contient les routes /login, /register,
+// /logout, etc. Tu n'as rien à y toucher.
 // ══════════════════════════════════════════════════════════
-Route::prefix('admin')->group(function () {
-
-    // GET /admin → affiche le formulaire de connexion
-    Route::get('/', [AdminAuthController::class, 'showLogin'])
-        ->name('admin.login');
-
-    // POST /admin → traite le formulaire de connexion
-    Route::post('/', [AdminAuthController::class, 'login'])
-        ->name('admin.login.submit');
-
-    // POST /admin/logout → déconnecte l'admin
-    Route::post('/logout', [AdminAuthController::class, 'logout'])
-        ->name('admin.logout');
-
-    // ══════════════════════════════════════════════════════
-    // ROUTES PROTÉGÉES — accessibles uniquement aux admins
-    // Le middleware 'admin' bloque quiconque n'est pas admin
-    // ══════════════════════════════════════════════════════
-   
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
-
-    Route::apiResource('agents', AgentController::class)->except(['create', 'edit']);
-    Route::apiResource('regions', RegionController::class)->only(['index', 'show']);
-});
-
-
 require __DIR__.'/auth.php';
-});
+
+// ══════════════════════════════════════════════════════════
+// ZONE ADMIN — protégée par deux middlewares cumulés :
+//   - 'auth'  : vérifie que l'utilisateur est connecté
+//   - 'admin' : vérifie que is_admin = true dans la BDD
+// Si l'une des deux conditions échoue, Laravel redirige
+// automatiquement vers /login
+// ══════════════════════════════════════════════════════════
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // Tableau de bord principal
+        Route::get('dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+    });

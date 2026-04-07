@@ -14,7 +14,7 @@ class AgentManager extends Component
     public $agentId = null;
     public $agence = '';
     public $nom = '';
-    public $depts = '';
+    public $departement = '';
     public $tel = '';
     public $telRaw = '';
     public $email = '';
@@ -29,7 +29,7 @@ class AgentManager extends Component
         'nom'              => 'required|string|max:255',
         'email'            => 'required|email|max:255',
         'agence'           => 'nullable|string|max:255',
-        'depts'            => 'nullable|string|max:255',
+        'departement'      => 'nullable|string|max:255',
         'tel'              => 'nullable|string|max:50',
         'telRaw'           => 'nullable|string|max:50',
     ];
@@ -37,7 +37,7 @@ class AgentManager extends Component
     /** Affiche le formulaire vide pour un ajout */
     public function openAddForm()
     {
-        $this->reset(['agentId', 'agence', 'nom', 'depts', 'tel', 'telRaw', 'email']);
+        $this->reset(['agentId', 'agence', 'nom', 'departement', 'tel', 'telRaw', 'email']);
         $this->isEditing = false;
         $this->showForm = true;
     }
@@ -52,7 +52,7 @@ class AgentManager extends Component
         $this->selectedRegionId = $agent->region_id;
         $this->agence          = $agent->agence ?? '';
         $this->nom             = $agent->nom;
-        $this->depts           = $agent->depts ?? '';
+        $this->departement     = $agent->departement ?? '';
         $this->tel             = $agent->tel ?? '';
         $this->telRaw          = $agent->tel_raw ?? '';
         $this->email           = $agent->email;
@@ -70,7 +70,7 @@ class AgentManager extends Component
             'region_id' => $this->selectedRegionId,
             'agence'    => $this->agence ?: null,
             'nom'       => $this->nom,
-            'depts'     => $this->depts,
+            'departement'  => $this->departement,
             'tel'       => $this->tel,
             'tel_raw'   => $this->telRaw,
             'email'     => $this->email,
@@ -85,7 +85,7 @@ class AgentManager extends Component
         }
 
         $this->showForm = false;
-        $this->reset(['agentId', 'agence', 'nom', 'depts', 'tel', 'telRaw', 'email']);
+        $this->reset(['agentId', 'agence', 'nom', 'departement', 'tel', 'telRaw', 'email']);
     }
 
     /** Suppression avec confirmation côté serveur */
@@ -100,7 +100,7 @@ class AgentManager extends Component
         // On recharge les régions avec leurs agents à chaque rendu
         // Livewire gère ça automatiquement après chaque action
         return view('livewire.admin.agent-manager', [
-            'regions' => Region::with('agents')->orderBy('name')->get(),
+            'regions' => Region::with('agents')->orderBy('nom')->get(),
         ]);
     }
 }

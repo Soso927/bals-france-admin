@@ -14,7 +14,7 @@ class Agent extends Model
 		'region_id',
         'agence',
         'nom',
-        'depts',
+        'departement',
         'tel',
         'tel_raw',
         'email',
