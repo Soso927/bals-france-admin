@@ -15,7 +15,7 @@ Route::get('/', function () {
 // ══════════════════════════════════════════════════════════
 Route::get('/france-map', function () {
     return view('france-map');
-})->name('france-map');
+});
 
 // ══════════════════════════════════════════════════════════
 // AUTHENTIFICATION — gérée entièrement par Livewire Volt

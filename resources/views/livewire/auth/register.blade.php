@@ -39,7 +39,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <img src="{{ asset('images/logo-Bals.png') }}" alt="Logo Bals" class="h-16 mb-2">
 
     <x-auth-header 
-        title="Créer un compte" 
+        title="Créer un compte Administrateur" 
         description="Saisissez vos coordonnées ci-dessous pour créer votre compte"
         class="!text-black" 
     />

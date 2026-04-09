@@ -1,0 +1,122 @@
+[
+  {
+    "region_nom": "Normandie",
+    "agence": null,
+    "nom": "Vincent CARPENTIER",
+    "departement": "Dépt. 14, 27, 50, 61, 76",
+    "tel": "06 27 32 49 23",
+    "tel_raw": "+330627324923",
+    "email": "vincent.carpentier85@sfr.fr",
+    "order": 0
+  },
+  {
+    "region_nom": "Bretagne",
+    "agence": "AGENCE BONDUELLE",
+    "nom": "Isabelle ESPELLE",
+    "departement": "Dépt. 22, 29, 35, 56",
+    "tel": "02 40 09 77 95",
+    "tel_raw": "+330240097795",
+    "email": "contact@agence-bonduelle.com",
+    "order": 0
+  },
+  {
+    "region_nom": "Pays de la Loire",
+    "agence": "AGENCE BONDUELLE",
+    "nom": "Isabelle ESPELLE",
+    "departement": "Dépt. 44, 49, 53, 72, 79, 85",
+    "tel": "02 40 09 77 95",
+    "tel_raw": "+330240097795",
+    "email": "contact@agence-bonduelle.com",
+    "order": 0
+  },
+  {
+    "region_nom": "Centre-Val de Loire",
+    "agence": null,
+    "nom": "Yann GUYADER",
+    "departement": "Dépt. 18, 28, 36, 37, 41, 45, 86",
+    "tel": "06 02 19 82 90",
+    "tel_raw": "+330602198290",
+    "email": "yguyader@gstec.fr",
+    "order": 0
+  },
+  {
+    "region_nom": "Île-de-France",
+    "agence": "AGENCE DUMAS",
+    "nom": "Alexis ANDRADE SILVA",
+    "departement": "Dépt. 75, 78, 92",
+    "tel": "06 33 37 30 17",
+    "tel_raw": "+330633373017",
+    "email": "a.andradesilva@agencedumas.net",
+    "order": 0
+  },
+  {
+    "region_nom": "Île-de-France",
+    "agence": "AGENCE DUMAS",
+    "nom": "Arnaud JOUSSELIN",
+    "departement": "Dépt. 93, 95",
+    "tel": "06 50 98 23 67",
+    "tel_raw": "+330650982367",
+    "email": "a.jousselin@agencedumas.net",
+    "order": 10
+  },
+  {
+    "region_nom": "Île-de-France",
+    "agence": "AGENCE DUMAS",
+    "nom": "Adrien DUMAS",
+    "departement": "Dépt. 77, 91, 94",
+    "tel": "06 33 57 21 38",
+    "tel_raw": "+330633572138",
+    "email": "a.dumas@agencedumas.net",
+    "order": 20
+  },
+  {
+    "region_nom": "Hauts-de-France",
+    "agence": "AGENCE BESSA",
+    "nom": "Francis BESSA",
+    "departement": "Dépt. 59, 62, 80",
+    "tel": "06 09 62 92 30",
+    "tel_raw": "+330609629230",
+    "email": "Francis.bessa@agencebessa.fr",
+    "order": 0
+  },
+  {
+    "region_nom": "Hauts-de-France",
+    "agence": "AGENCE PICHAMPARDENNAISE",
+    "nom": "Angéline FAUCHART-PETIT",
+    "departement": "Dépt. 02, 60",
+    "tel": "06 62 39 11 93",
+    "tel_raw": "+330662391193",
+    "email": "agence.angeline@orange.fr",
+    "order": 10
+  },
+  {
+    "region_nom": "Grand Est",
+    "agence": "AGENCE VIERLING",
+    "nom": "Christian VIERLING",
+    "departement": "Dépt. 54, 55, 57, 67, 68, 88, 90",
+    "tel": "06 09 48 66 91",
+    "tel_raw": "+330609486691",
+    "email": "contact@agencevierling.fr",
+    "order": 0
+  },
+  {
+    "region_nom": "Grand Est",
+    "agence": "AGENCE PICHAMPARDENNAISE",
+    "nom": "Angéline FAUCHART-PETIT",
+    "departement": "Dépt. 08, 10, 51, 52",
+    "tel": "06 62 39 11 93",
+    "tel_raw": "+330662391193",
+    "email": "agence.angeline@orange.fr",
+    "order": 10
+  },
+  {
+    "region_nom": "Bourgogne-Franche-Comté",
+    "agence": "FANJOUX",
+    "nom": "Raphaël LEGRAND",
+    "departement": "Dépt. 21, 25, 39, 58, 70, 71, 89",
+    "tel": "06 12 22 34 16",
+    "tel_raw": "+330612223416",
+    "email": "Raphael.legrand@fanjouxdiffusion.com",
+    "order": 0
+  }
+]
