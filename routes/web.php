@@ -7,7 +7,14 @@ use Livewire\Volt\Volt;
 // PAGE D'ACCUEIL — site public
 // ══════════════════════════════════════════════════════════
 Route::get('/', function () {
-    return view('welcome');
+    $stats = [
+        'totalAgents'  => \App\Models\Agent::count(),
+        'totalRegions' => \App\Models\Region::count(),
+        'totalAgences' => \App\Models\Agent::whereNotNull('agence')
+                            ->distinct('agence')
+                            ->count('agence'),
+    ];
+    return view('welcome', compact('stats'));
 })->name('home');
 
 // ══════════════════════════════════════════════════════════
