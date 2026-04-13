@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     {{-- Flux UI et styles Livewire --}}
-    @fluxStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gray-50 font-sans antialiased">

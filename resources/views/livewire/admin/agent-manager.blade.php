@@ -169,8 +169,8 @@
                                         <div class="font-medium">{{ $agent->nom }}</div>
                                     </td>
                                     <td class="py-3 pr-4 text-stone-500">
-                                        {{-- $agent->departements car la colonne s'appelle 'departements' --}}
-                                        {{ $agent->departements }}
+                                        {{-- $agent->departement car la colonne s'appelle 'departement' --}}
+                                        {{ $agent->departement }}
                                     </td>
                                     <td class="py-3 pr-4">
                                         <div>{{ $agent->tel }}</div>

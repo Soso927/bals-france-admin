@@ -39,7 +39,14 @@ Route::middleware(['auth', 'admin'])
 
         // Tableau de bord principal
         Route::get('dashboard', function () {
-            return view('admin.dashboard');
+            $stats = [
+                'totalAgents'  => \App\Models\Agent::count(),
+                'totalRegions' => \App\Models\Region::count(),
+                'totalAgences' => \App\Models\Agent::whereNotNull('agence')
+                                    ->distinct('agence')
+                                    ->count('agence'),
+            ];
+            return view('admin.dashboard', compact('stats'));
         })->name('dashboard');
 
     });

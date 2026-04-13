@@ -173,7 +173,7 @@ new #[Layout('layouts.guest')] class extends Component
     {{-- En-tête avec titre et description --}}
     <x-auth-header
         title="Connexion à votre compte"
-        description="Entrez votre adresse email et votre mot de passe pour vous connecter"
+        description="Entrez votre adresse email et votre mot de passe "
     />
 
     {{-- Message de statut (ex: après réinitialisation de mot de passe) --}}

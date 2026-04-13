@@ -9,7 +9,7 @@
             <a href="{{ route('admin.dashboard') }}" class="rounded-2xl px-4 py-2 text-stone-700 hover:bg-stone-100">Tableau de bord</a>
 
             @auth
-                <form method="POST" action="{{ route('admin.logout') }}">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="rounded-2xl bg-stone-900 px-4 py-2 text-white">Déconnexion</button>
                 </form>

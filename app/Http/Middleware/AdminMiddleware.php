@@ -16,7 +16,7 @@ public function handle(Request $request, Closure $next): Response
         if (!auth()->check() || !auth()->user()->is_admin) {
             // Si l'une des conditions échoue, on redirige vers la page de connexion 
             // L'utilisateur ne voit jamais le dashboard s'il n'est pas admin
-            return redirect()->route('admin.login');
+            return redirect()->route('login');
         }
         // Tout est bon, on laisse passer la requête 
         return $next($request);
