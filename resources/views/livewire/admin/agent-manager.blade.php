@@ -86,9 +86,9 @@
                            class="w-full rounded-2xl border border-stone-300 px-4 py-3">
                 </label>
 
-                {{-- Téléphone brut pour le lien tel: — propriété $telRaw --}}
+                {{-- format de numéro de téléphone international pour le lien tel: — propriété $telRaw --}}
                 <label class="block">
-                    <span class="mb-1 block text-sm font-medium">Téléphone brut</span>
+                    <span class="mb-1 block text-sm font-medium">Téléphone international</span>
                     <input wire:model="telRaw" type="text"
                            placeholder="Ex: +33612345678"
                            class="w-full rounded-2xl border border-stone-300 px-4 py-3">
@@ -101,6 +101,20 @@
                            placeholder="agent@exemple.fr"
                            class="w-full rounded-2xl border border-stone-300 px-4 py-3">
                     @error('email')
+                        <span class="mt-1 block text-sm text-red-600">{{ $message }}</span>
+                    @enderror
+                </label>
+
+                {{-- Teinte de couleur — wire:model synchronise la valeur avec $color dans AgentManager --}}
+                <label class="block">
+                    <span class="mb-1 block text-sm font-medium">Teinte de couleur</span>
+                    <div class="flex items-center gap-3">
+                        <input wire:model="color"
+                               type="color"
+                               class="h-10 w-14 cursor-pointer rounded-xl border border-stone-300 p-1">
+                        <span class="text-sm text-stone-500 font-mono">{{ $color }}</span>
+                    </div>
+                    @error('color')
                         <span class="mt-1 block text-sm text-red-600">{{ $message }}</span>
                     @enderror
                 </label>
@@ -160,13 +174,20 @@
                             @forelse ($region->agents as $agent)
                                 <tr>
                                     <td class="py-3 pr-4">
-                                        @if ($agent->agence)
-                                            <div class="text-xs font-bold uppercase text-blue-600">
-                                                {{ $agent->agence }}
+                                        <div class="flex items-center gap-2">
+                                            {{-- Pastille colorée — style inline obligatoire : Tailwind JIT ne génère pas de classes hex dynamiques --}}
+                                            <span class="inline-block h-3 w-3 flex-shrink-0 rounded-full"
+                                                  style="background-color: {{ $agent->color ?? '#94A3B8' }}"
+                                                  title="{{ $agent->color ?? '#94A3B8' }}"></span>
+                                            <div>
+                                                @if ($agent->agence)
+                                                    <div class="text-xs font-bold uppercase text-blue-600">
+                                                        {{ $agent->agence }}
+                                                    </div>
+                                                @endif
+                                                <div class="font-medium">{{ $agent->nom }}</div>
                                             </div>
-                                        @endif
-                                        {{-- $agent->nom car la colonne s'appelle 'nom' --}}
-                                        <div class="font-medium">{{ $agent->nom }}</div>
+                                        </div>
                                     </td>
                                     <td class="py-3 pr-4 text-stone-500">
                                         {{-- $agent->departement car la colonne s'appelle 'departement' --}}

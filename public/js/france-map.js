@@ -64,9 +64,14 @@ const DEFAULT_COLOR = '#94A3B8';
  * Variables globales utilisées par plusieurs fonctions.
  * On les déclare ici pour qu'elles soient accessibles partout dans ce fichier.
  */
-let CONTACTS   = {};   // Contiendra les données des agents chargées depuis l'API
-let deptCounts = {};   // Nombre de départements par région
-let allPaths   = null; // Référence aux éléments SVG des départements
+let CONTACTS      = {};   // Contiendra les données des agents chargées depuis l'API
+let deptCounts    = {};   // Nombre de départements par région
+let allPaths      = null; // Référence aux éléments SVG des départements
+// AJOUT — dictionnaire code_dept → couleur, construit à partir des agents en base.
+// Ex : { "14": "#16A34A", "27": "#16A34A", "75": "#DC2626", ... }
+// Permet de colorier chaque département selon l'agent qui le couvre,
+// et non plus selon la région géographique seule.
+let deptColorMap  = {};
 
 
 /*
@@ -127,10 +132,39 @@ async function chargerEtInitialiser() {
                     tel:    agent.tel,
                     telRaw: agent.tel_raw,
                     email:  agent.email,
+                    color:  agent.color,
                 }))
             };
             return acc;
         }, {});
+
+        /*
+         * AJOUT — Construction du dictionnaire code_dept → couleur
+         *
+         * On parcourt chaque région et chaque agent pour extraire les numéros
+         * de département couverts (ex : "Dépt. 14, 27, 50" → ["14","27","50"]).
+         * Le regex \d{2,3} capture les codes à 2 ou 3 chiffres (01→95, 971…).
+         * Chaque code reçoit la couleur de la région de l'agent.
+         *
+         * Le champ gn_a1_code du GeoJSON a la forme "FR.14" → on extrait "14"
+         * pour l'utiliser comme clé dans ce dictionnaire (voir dessinerCarte).
+         *
+         * Ce bloc tourne AVANT dessinerCarte() afin que les couleurs soient
+         * prêtes dès le premier tracé SVG.
+         */
+        deptColorMap = {};
+        Object.entries(CONTACTS).forEach(([regionName, data]) => {
+            const regionColor = COLORS[regionName] || DEFAULT_COLOR;
+            data.agents.forEach(agent => {
+                const codes = (agent.depts || '').match(/\d{2,3}/g) || [];
+                codes.forEach(code => {
+                    // Priorité à la couleur individuelle de l'agent (définie par l'admin).
+                    // Si l'agent n'a pas de couleur (null), on retombe sur la couleur de région.
+                    deptColorMap[code] = agent.color || regionColor;
+                });
+            });
+        });
+        // FIN AJOUT
 
         /*
          * ÉTAPE 2 : Charger le GeoJSON et dessiner la carte
@@ -206,7 +240,15 @@ async function dessinerCarte() {
         .append('path')
         .attr('class', 'departement')
         .attr('d', path)
-        .attr('fill', d => COLORS[d.properties.region] || DEFAULT_COLOR)
+        // MODIFIÉ — Priorité au dictionnaire deptColorMap (code agent → couleur).
+        // On extrait le code numérique depuis gn_a1_code ("FR.14" → "14"),
+        // puis on cherche dans deptColorMap. Si le département n'est couvert
+        // par aucun agent, on retombe sur la couleur de la région géographique,
+        // et enfin sur la couleur par défaut (gris) si la région n'est pas listée.
+        .attr('fill', d => {
+            const code = (d.properties.gn_a1_code || '').replace('FR.', '');
+            return deptColorMap[code] || COLORS[d.properties.region] || DEFAULT_COLOR;
+        })
         .on('mousemove', (event, d) => {
             tooltip.style.opacity = '1';
             tooltip.style.left    = (event.clientX + 16) + 'px';

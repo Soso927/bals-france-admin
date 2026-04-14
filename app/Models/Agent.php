@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $tel
  * @property string|null $tel_raw
  * @property string      $email
+ * @property string|null $color
  */
 class Agent extends Model
 {
@@ -35,7 +36,7 @@ class Agent extends Model
         'tel',
         'tel_raw',
         'email',
-
+        'color',
     ];
 
     /**

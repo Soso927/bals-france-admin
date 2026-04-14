@@ -18,6 +18,7 @@ class AgentManager extends Component
     public $tel = '';
     public $telRaw = '';
     public $email = '';
+    public $color = '#94A3B8';
 
     // Contrôle l'affichage du formulaire
     public $showForm = false;
@@ -32,12 +33,14 @@ class AgentManager extends Component
         'departement'      => 'nullable|string|max:255',
         'tel'              => 'nullable|string|max:50',
         'telRaw'           => 'nullable|string|max:50',
+        'color'            => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
     ];
 
     /** Affiche le formulaire vide pour un ajout */
     public function openAddForm()
     {
         $this->reset(['agentId', 'agence', 'nom', 'departement', 'tel', 'telRaw', 'email']);
+        $this->color = '#94A3B8'; // reset() mettrait '' → invalide pour type="color"
         $this->isEditing = false;
         $this->showForm = true;
     }
@@ -56,6 +59,7 @@ class AgentManager extends Component
         $this->tel             = $agent->tel ?? '';
         $this->telRaw          = $agent->tel_raw ?? '';
         $this->email           = $agent->email;
+        $this->color           = $agent->color ?? '#94A3B8';
 
         $this->isEditing = true;
         $this->showForm = true;
@@ -74,6 +78,7 @@ class AgentManager extends Component
             'tel'       => $this->tel,
             'tel_raw'   => $this->telRaw,
             'email'     => $this->email,
+            'color'     => $this->color ?: '#94A3B8',
         ];
 
         if ($this->isEditing) {
@@ -86,6 +91,7 @@ class AgentManager extends Component
 
         $this->showForm = false;
         $this->reset(['agentId', 'agence', 'nom', 'departement', 'tel', 'telRaw', 'email']);
+        $this->color = '#94A3B8';
     }
 
     /** Suppression avec confirmation côté serveur */
