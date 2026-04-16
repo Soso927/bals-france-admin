@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AgentController;
+use App\Http\Controllers\Api\DevisController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,10 @@ use Illuminate\Support\Facades\Route;
 // ── Route PUBLIQUE : lecture seule ─────────────────────────────────────────
 // Accessible par tous les visiteurs pour alimenter la carte interactive.
 Route::get('/agents', [AgentController::class, 'index']);
+
+// ── Route PUBLIQUE : soumission d'une demande de devis ─────────────────────
+// Appelée par le bouton "Envoyer" des configurateurs (sans authentification).
+Route::post('/devis', [DevisController::class, 'store']);
 
 // ── Routes PROTÉGÉES : modifications réservées à l'admin connecté ──────────
 Route::middleware('auth:sanctum')->group(function () {

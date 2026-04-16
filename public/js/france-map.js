@@ -160,7 +160,10 @@ async function chargerEtInitialiser() {
                 codes.forEach(code => {
                     // Priorité à la couleur individuelle de l'agent (définie par l'admin).
                     // Si l'agent n'a pas de couleur (null), on retombe sur la couleur de région.
-                    deptColorMap[code] = agent.color || regionColor;
+                    const couleurAgent = (agent.color && agent.color.toUpperCase() !== '#94A3B8')
+                    ? agent.color
+                    : null;
+                    deptColorMap[code] = couleurAgent || regionColor;
                 });
             });
         });

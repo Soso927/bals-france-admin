@@ -41,7 +41,7 @@
                     <select wire:model="selectedRegionId"
                             class="w-full rounded-2xl border border-stone-300 px-4 py-3">
                         <option value="">Sélectionner une région</option>
-                        @foreach ($regions as $region)
+                        @foreach ($allRegions as $region)
                             {{-- $region->nom car la colonne s'appelle 'nom' dans MySQL --}}
                             <option value="{{ $region->id }}">{{ $region->nom }}</option>
                         @endforeach
@@ -138,7 +138,7 @@
          On boucle sur les régions, puis sur leurs agents
          ════════════════════════════════════════ --}}
     <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
-        <div class="flex items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
                 <h2 class="text-xl font-semibold">Agents commerciaux</h2>
                 <p class="mt-1 text-sm text-stone-600">
@@ -146,88 +146,105 @@
                 </p>
             </div>
             <span class="rounded-full bg-stone-100 px-3 py-1 text-sm text-stone-600">
-                {{-- On compte le total d'agents sur toutes les régions --}}
-                {{ $regions->sum(fn($r) => $r->agents->count()) }} agents
+                {{-- total() retourne le COUNT(*) du paginateur — précis même avec un filtre actif --}}
+                {{ $agents->total() }} agents
             </span>
         </div>
 
-        <div class="mt-6 space-y-6">
-            @forelse ($regions as $region)
-                {{-- Titre de la région --}}
-                <div>
-                    <h3 class="mb-2 text-sm font-semibold uppercase tracking-wider text-stone-400">
-                        {{-- $region->nom correspond à la colonne 'nom' dans MySQL --}}
-                        {{ $region->nom }}
-                        <span class="ml-2 text-xs font-normal">{{ $region->zone }}</span>
-                    </h3>
+        {{-- Barre de recherche + sélecteur de résultats par page --}}
+        <div class="mt-4 flex flex-wrap gap-3">
+            {{-- debounce.300ms : attend 300ms après la dernière frappe avant d'envoyer la requête AJAX --}}
+            <input wire:model.live.debounce.300ms="search"
+                   type="search"
+                   placeholder="Rechercher par nom, agence, email, département…"
+                   class="flex-1 min-w-[200px] rounded-2xl border border-stone-300 px-4 py-2.5 text-sm
+                          focus:outline-none focus:ring-2 focus:ring-stone-400">
 
-                    <table class="min-w-full divide-y divide-stone-200 text-sm">
-                        <thead>
-                            <tr class="text-left text-stone-500">
-                                <th class="pb-2 pr-4 font-medium">Agent</th>
-                                <th class="pb-2 pr-4 font-medium">Départements</th>
-                                <th class="pb-2 pr-4 font-medium">Contact</th>
-                                <th class="pb-2 text-right font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-stone-100">
-                            @forelse ($region->agents as $agent)
-                                <tr>
-                                    <td class="py-3 pr-4">
-                                        <div class="flex items-center gap-2">
-                                            {{-- Pastille colorée — style inline obligatoire : Tailwind JIT ne génère pas de classes hex dynamiques --}}
-                                            <span class="inline-block h-3 w-3 flex-shrink-0 rounded-full"
-                                                  style="background-color: {{ $agent->color ?? '#94A3B8' }}"
-                                                  title="{{ $agent->color ?? '#94A3B8' }}"></span>
-                                            <div>
-                                                @if ($agent->agence)
-                                                    <div class="text-xs font-bold uppercase text-blue-600">
-                                                        {{ $agent->agence }}
-                                                    </div>
-                                                @endif
-                                                <div class="font-medium">{{ $agent->nom }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 pr-4 text-stone-500">
-                                        {{-- $agent->departement car la colonne s'appelle 'departement' --}}
-                                        {{ $agent->departement }}
-                                    </td>
-                                    <td class="py-3 pr-4">
-                                        <div>{{ $agent->tel }}</div>
-                                        <div class="text-stone-500">{{ $agent->email }}</div>
-                                    </td>
-                                    <td class="py-3 text-right">
-                                        <div class="flex justify-end gap-2">
-                                            {{-- wire:click doit correspondre exactement
-                                                 aux noms des méthodes dans AgentManager.php --}}
-                                            <button wire:click="editAgent({{ $agent->id }})"
-                                                    type="button"
-                                                    class="rounded-2xl border border-stone-300 px-3 py-1.5 text-sm">
-                                                Modifier
-                                            </button>
-                                            <button wire:click="deleteAgent({{ $agent->id }})"
-                                                    wire:confirm="Supprimer cet agent ?"
-                                                    type="button"
-                                                    class="rounded-2xl border border-red-200 px-3 py-1.5 text-sm text-red-700">
-                                                Supprimer
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="py-4 text-center text-stone-400">
-                                        Aucun agent pour cette région.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            @empty
-                <p class="py-10 text-center text-stone-500">Aucune région en base de données.</p>
-            @endforelse
+            {{-- Pas de debounce sur le select : un clic = un choix, pas de frappes en rafale --}}
+            <select wire:model.live="perPage"
+                    class="rounded-2xl border border-stone-300 px-4 py-2.5 text-sm
+                           focus:outline-none focus:ring-2 focus:ring-stone-400">
+                <option value="5">5 par page</option>
+                <option value="10">10 par page</option>
+                <option value="25">25 par page</option>
+                <option value="50">50 par page</option>
+            </select>
         </div>
+
+        <div class="mt-6 overflow-x-auto">
+            <table class="min-w-full divide-y divide-stone-200 text-sm">
+                <thead>
+                    <tr class="text-left text-stone-500">
+                        <th class="pb-2 pr-4 font-medium">Agent</th>
+                        <th class="pb-2 pr-4 font-medium">Région</th>
+                        <th class="pb-2 pr-4 font-medium">Départements</th>
+                        <th class="pb-2 pr-4 font-medium">Contact</th>
+                        <th class="pb-2 text-right font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    @forelse ($agents as $agent)
+                        <tr>
+                            <td class="py-3 pr-4">
+                                <div class="flex items-center gap-2">
+                                    {{-- Pastille colorée — style inline obligatoire : Tailwind JIT ne génère pas de classes hex dynamiques --}}
+                                    <span class="inline-block h-3 w-3 flex-shrink-0 rounded-full"
+                                          style="background-color: {{ $agent->color ?? '#94A3B8' }}"
+                                          title="{{ $agent->color ?? '#94A3B8' }}"></span>
+                                    <div>
+                                        @if ($agent->agence)
+                                            <div class="text-xs font-bold uppercase text-blue-600">
+                                                {{ $agent->agence }}
+                                            </div>
+                                        @endif
+                                        <div class="font-medium">{{ $agent->nom }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3 pr-4 text-stone-500">
+                                {{-- $agent->region chargé par with('region') dans render() — zéro requête supplémentaire --}}
+                                {{ $agent->region->nom ?? '—' }}
+                            </td>
+                            <td class="py-3 pr-4 text-stone-500">
+                                {{ $agent->departement }}
+                            </td>
+                            <td class="py-3 pr-4">
+                                <div>{{ $agent->tel }}</div>
+                                <div class="text-stone-500">{{ $agent->email }}</div>
+                            </td>
+                            <td class="py-3 text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button wire:click="editAgent({{ $agent->id }})"
+                                            type="button"
+                                            class="rounded-2xl border border-stone-300 px-3 py-1.5 text-sm">
+                                        Modifier
+                                    </button>
+                                    <button wire:click="deleteAgent({{ $agent->id }})"
+                                            wire:confirm="Supprimer cet agent ?"
+                                            type="button"
+                                            class="rounded-2xl border border-red-200 px-3 py-1.5 text-sm text-red-700">
+                                        Supprimer
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-stone-400">
+                                Aucun agent trouvé.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Contrôles de pagination — masqués s'il n'y a qu'une seule page --}}
+        @if ($agents->hasPages())
+            <div class="mt-6">
+                {{ $agents->links() }}
+            </div>
+        @endif
+
     </div>
 </section>

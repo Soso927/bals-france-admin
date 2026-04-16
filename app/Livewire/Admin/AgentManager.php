@@ -5,9 +5,11 @@ namespace App\Livewire\Admin;
 use App\Models\Agent;
 use App\Models\Region;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class AgentManager extends Component
 {
+    use WithPagination; // il faut l'activer dans la classe
     // Propriétés du formulaire d'ajout/modification
     // Livewire les synchronise automatiquement avec les champs HTML (wire:model)
     public $selectedRegionId = null;
@@ -23,6 +25,10 @@ class AgentManager extends Component
     // Contrôle l'affichage du formulaire
     public $showForm = false;
     public $isEditing = false;
+
+    // Pagination et recherche
+    public string $search  = '';  // terme de recherche saisi par l'utilisateur
+    public int    $perPage = 10;  // nombre d'agents affichés par page
 
     // Validation : règles appliquées automatiquement avant toute action
     protected $rules = [
@@ -94,6 +100,18 @@ class AgentManager extends Component
         $this->color = '#94A3B8';
     }
 
+    /** Réinitialise la page à 1 avant d'appliquer le nouveau terme de recherche */
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    /** Réinitialise la page à 1 quand l'utilisateur change le nombre de résultats par page */
+    public function updatingPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     /** Suppression avec confirmation côté serveur */
     public function deleteAgent(int $agentId)
     {
@@ -103,10 +121,28 @@ class AgentManager extends Component
 
     public function render()
     {
-        // On recharge les régions avec leurs agents à chaque rendu
-        // Livewire gère ça automatiquement après chaque action
+        // Requête principale : agents avec leur région (eager loading pour éviter N+1)
+        // ->when() ajoute les filtres LIKE uniquement si $search est non vide
+        $query = Agent::with('region')
+            ->when(
+                $this->search,
+                fn ($q) => $q->where(fn ($q2) =>
+                    $q2->where('nom',          'like', "%{$this->search}%")
+                       ->orWhere('agence',      'like', "%{$this->search}%")
+                       ->orWhere('email',       'like', "%{$this->search}%")
+                       ->orWhere('departement', 'like', "%{$this->search}%")
+                )
+            )
+            ->orderBy('nom');
+
         return view('livewire.admin.agent-manager', [
-            'regions' => Region::with('agents')->orderBy('nom')->get(),
+            // paginate() émet SELECT COUNT(*) + SELECT ... LIMIT x OFFSET y
+            // Retourne un LengthAwarePaginator avec total(), hasPages(), links()
+            'agents'     => $query->paginate($this->perPage),
+
+            // Requête séparée pour le select du formulaire : doit toujours lister
+            // TOUTES les régions, indépendamment de la page ou du filtre actif
+            'allRegions' => Region::orderBy('nom')->get(),
         ]);
     }
 }

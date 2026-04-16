@@ -13,6 +13,7 @@
 
         <nav class="flex items-center justify-end gap-3 text-sm">
             <a href="{{ route('admin.dashboard') }}" class="rounded-2xl px-4 py-2 text-stone-700 hover:bg-stone-100">Tableau de bord</a>
+            <a href="{{ route('admin.devis') }}" class="rounded-2xl px-4 py-2 text-stone-700 hover:bg-stone-100">Demandes de devis</a>
 
             @auth
                 <form method="POST" action="{{ route('logout') }}">

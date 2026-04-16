@@ -25,6 +25,19 @@ Route::get('/france-map', function () {
 });
 
 // ══════════════════════════════════════════════════════════
+// CONFIGURATEURS DE DEVIS — pages publiques
+// ══════════════════════════════════════════════════════════
+Route::prefix('configurateur')->name('configurateur.')->group(function () {
+    // Cette ligne permet de répondre à l'URL "/configurateur"
+    Route::get('/', fn() => view('configurateur.index'))->name('index');
+    Route::get('chantier',           fn() => view('configurateur.chantier'))->name('chantier');
+    Route::get('industrie',          fn() => view('configurateur.industrie'))->name('industrie');
+    Route::get('prise-industrielle', fn() => view('configurateur.prise-industrielle'))->name('prise-industrielle');
+    Route::get('etage',              fn() => view('configurateur.etage'))->name('etage');
+    Route::get('evenementiel',       fn() => view('configurateur.evenementiel'))->name('evenementiel');
+});
+
+// ══════════════════════════════════════════════════════════
 // AUTHENTIFICATION — gérée entièrement par Livewire Volt
 // Le fichier auth.php est généré automatiquement par le
 // starter kit. Il contient les routes /login, /register,
@@ -55,5 +68,15 @@ Route::middleware(['auth', 'admin'])
             ];
             return view('admin.dashboard', compact('stats'));
         })->name('dashboard');
+
+        // Demandes de devis
+        Route::get('devis', function () {
+            $stats = [
+                'nouveaux' => \App\Models\Devis::where('statut', 'nouveau')->count(),
+                'lus'      => \App\Models\Devis::where('statut', 'lu')->count(),
+                'traites'  => \App\Models\Devis::where('statut', 'traité')->count(),
+            ];
+            return view('admin.devis', compact('stats'));
+        })->name('devis');
 
     });
