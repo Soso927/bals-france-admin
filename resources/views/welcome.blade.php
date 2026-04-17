@@ -57,8 +57,12 @@
                class="rounded-2xl border border-stone-300 px-6 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50">
                 Voir la carte France
             </a>
-           
-            
+
+            {{-- Lien vers les configurateurs de devis --}}
+            <a href="{{ route('configurateur.index') }}"
+               class="rounded-2xl border border-stone-300 px-6 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50">
+                Configurateurs de devis →
+            </a>
 
         </div>
     </div>

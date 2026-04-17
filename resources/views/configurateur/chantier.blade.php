@@ -1,13 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Configurateur Coffret Chantier — BALS')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-8">
+<div>
 
     {{-- En-tête --}}
     <div class="mb-6">
-        <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-bals-blue mb-2 inline-block">← Retour à l'accueil</a>
         <h1 class="text-2xl font-black text-gray-900">Configurateur de devis</h1>
         <p class="text-gray-500 text-sm mt-1">Remplissez les sections pour obtenir votre devis personnalisé.</p>
     </div>
@@ -95,7 +94,7 @@
                     </div>
                     {{-- Matériau --}}
                     <div>
-                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Matériau du coffret</p>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Matériaux du coffret</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach(['Caoutchouc', 'Polycarbonate', 'Polyester', 'Acier inoxydable'] as $opt)
                             <label class="flex items-center gap-2 cursor-pointer border border-gray-200 rounded-xl px-4 py-2 hover:border-bals-blue transition-all has-[:checked]:border-bals-blue has-[:checked]:bg-bals-blue/5">

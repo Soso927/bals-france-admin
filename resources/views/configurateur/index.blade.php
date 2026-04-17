@@ -1,13 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Configurateurs de devis — BALS')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-12">
+<div class="max-w-5xl mx-auto">
 
     {{-- En-tête --}}
     <div class="mb-10 text-center">
-        <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-bals-blue mb-4 inline-block">← Retour à l'accueil</a>
         <h1 class="text-3xl font-black text-gray-900">Configurateurs de devis</h1>
         <p class="text-gray-500 mt-2">Choisissez le type de coffret pour démarrer votre configuration personnalisée.</p>
     </div>

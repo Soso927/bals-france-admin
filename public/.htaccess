@@ -14,6 +14,9 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # Force /configurateur(/) vers Laravel même si le dossier public/configurateur/ existe
+    RewriteRule ^configurateur/?$ index.php [L]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
