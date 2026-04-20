@@ -1,3 +1,20 @@
+{{--
+    ============================================================
+    VUE : Configurateur Prise Industrielle
+    ============================================================
+    Formulaire de devis pour les prises et connecteurs industriels.
+    Ce formulaire a une structure différente des autres :
+        - Les boutons de section utilisent data-action="toggle-section"
+          (gestion par délégation d'événements dans prise-industrielle.js)
+        - La section 2 contient une zone conditionnelle (#zone-montage)
+          affichée uniquement pour "Socle de prise" et "Socle connecteur"
+        - La section 4 combine quantité + observations
+
+    Les 3 partials communs (header, progress-bar, panneau-resume)
+    sont réutilisés — les fonctions globales envoyerDevis(),
+    copierResume() et reinitialiser() sont définies dans prise-industrielle.js.
+    ============================================================
+--}}
 @extends('layouts.admin')
 
 @section('title', 'Configurateur Prise Industrielle — BALS')
@@ -5,30 +22,19 @@
 @section('content')
 <div>
 
-    {{-- En-tête --}}
-    <div class="mb-6">
-        <h1 class="text-2xl font-black text-gray-900">Configurateur de devis</h1>
-        <p class="text-gray-500 text-sm mt-1">Remplissez les sections pour obtenir votre devis personnalisé.</p>
-    </div>
-
-    {{-- Navigation types --}}
+    @include('configurateur.partials.header')
     @include('configurateur.partials.nav-type', ['activeType' => 'prise-industrielle'])
-
-    {{-- Progression --}}
-    <div class="mt-6 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Complétion</span>
-            <span id="progression-texte" class="text-xs font-bold text-bals-blue">(0%)</span>
-        </div>
-        <div class="w-full bg-gray-100 rounded-full h-2">
-            <div id="progression-barre" class="bg-bals-blue h-2 rounded-full transition-all" style="width:0%"></div>
-        </div>
-    </div>
+    @include('configurateur.partials.progress-bar')
 
     <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {{-- ── Colonne gauche : Formulaire ── --}}
         <div class="lg:col-span-2 space-y-4">
+
+            {{--
+                Les boutons de section utilisent data-action="toggle-section"
+                au lieu de onclick="toggleSection()" — c'est prise-industrielle.js
+                qui écoute ces clics via document.addEventListener('click', ...).
+            --}}
 
             {{-- Section 1 : Identification --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -71,7 +77,7 @@
                 </div>
             </div>
 
-            {{-- Section 2 : Type de produit --}}
+            {{-- Section 2 : Type de produit (avec zone montage conditionnelle) --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <button data-action="toggle-section" data-section-id="s2"
                         class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
@@ -93,8 +99,11 @@
                             @endforeach
                         </div>
                     </div>
-
-                    {{-- Zone montage conditionnelle --}}
+                    {{--
+                        Zone montage conditionnelle : masquée par défaut.
+                        prise-industrielle.js l'affiche uniquement si "Socle de prise"
+                        ou "Socle connecteur" est sélectionné.
+                    --}}
                     <div id="zone-montage" class="hidden">
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Type de montage</p>
                         <div class="flex flex-wrap gap-2">
@@ -167,13 +176,13 @@
                 </div>
             </div>
 
-            {{-- Section 4 : Quantité + Observations --}}
+            {{-- Section 4 : Quantité & Observations (badge gris = section optionnelle) --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <button data-action="toggle-section" data-section-id="s4"
                         class="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors">
                     <div class="flex items-center gap-3">
                         <span class="flex-shrink-0 w-7 h-7 rounded-full bg-gray-200 text-gray-600 text-xs font-black flex items-center justify-center">4</span>
-                        <span class="font-bold text-gray-800">Quantité & Observations</span>
+                        <span class="font-bold text-gray-800">Quantité &amp; Observations</span>
                     </div>
                     <span id="arrow-s4" class="text-gray-400 text-sm">▼</span>
                 </button>
@@ -200,31 +209,8 @@
 
         </div>
 
-        {{-- ── Colonne droite : Résumé --}}
-        <div class="lg:col-span-1">
-            <div class="sticky top-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-                <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Résumé de la demande</p>
-
-                <div id="resume-zone" class="min-h-[120px] flex flex-col items-center justify-center text-center">
-                    <p class="text-bals-blue font-bold text-sm opacity-40">En attente de saisie...</p>
-                </div>
-
-                <div id="boutons-action" class="hidden mt-4 space-y-2 border-t border-gray-100 pt-4">
-                    <button data-action="envoyer-devis"
-                            class="w-full rounded-xl bg-bals-blue text-white font-bold py-3 text-sm hover:opacity-90 transition-opacity">
-                        ✉ Envoyer le devis
-                    </button>
-                    <button data-action="copier-resume"
-                            class="w-full rounded-xl border border-gray-200 text-gray-700 font-bold py-2.5 text-sm hover:bg-gray-50 transition-colors">
-                        Copier le résumé
-                    </button>
-                    <button data-action="reinitialiser"
-                            class="w-full rounded-xl border border-red-100 text-red-500 font-bold py-2.5 text-sm hover:bg-red-50 transition-colors">
-                        Réinitialiser
-                    </button>
-                </div>
-            </div>
-        </div>
+        {{-- Panneau résumé partagé — les fonctions onclick sont dans prise-industrielle.js --}}
+        @include('configurateur.partials.panneau-resume')
 
     </div>
 </div>

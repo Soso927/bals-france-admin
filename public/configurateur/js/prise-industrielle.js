@@ -3,6 +3,7 @@
 // ================================================================
 
 // ── Accordéons (via data-action) ────────────────────────────────
+// Accordéon : ouvrir/fermer via data-action="toggle-section" (prise-industrielle conserve ce pattern)
 document.addEventListener('click', function(e) {
     var toggleBtn = e.target.closest('[data-action="toggle-section"]');
     if (toggleBtn) {
@@ -45,7 +46,9 @@ document.addEventListener('input', function(e) {
     }
 });
 
-// ── Contrôle de la quantité ─────────────────────────────────────
+// Contrôle de la quantité via data-action="changer-qte"
+// Les boutons d'action (Envoyer, Copier, Réinitialiser) utilisent maintenant
+// onclick directement via le partial panneau-resume.blade.php.
 document.addEventListener('click', function(e) {
     var deltaBtn = e.target.closest('[data-action="changer-qte"]');
     if (deltaBtn) {
@@ -56,21 +59,6 @@ document.addEventListener('click', function(e) {
             input.value = Math.max(1, val);
             mettreAJour();
         }
-    }
-
-    // Réinitialiser
-    if (e.target.closest('[data-action="reinitialiser"]')) {
-        reinitialiser();
-    }
-
-    // Copier
-    if (e.target.closest('[data-action="copier-resume"]')) {
-        copierResume();
-    }
-
-    // Envoyer
-    if (e.target.closest('[data-action="envoyer-devis"]')) {
-        envoyerDevis();
     }
 });
 
