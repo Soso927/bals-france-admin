@@ -1,14 +1,3 @@
-{{--
-    ============================================================
-    VUE : Configurateur Coffret Chantier
-    ============================================================
-    Formulaire de devis pour les coffrets électriques de chantier.
-    Cette vue utilise :
-        - 3 partials @include pour les blocs communs à tous les formulaires
-        - des composants <x-configurateur.*> pour les blocs paramétrables
-        - chantier.js (partagé avec industrie) pour la logique JS
-    ============================================================
---}}
 @extends('layouts.admin')
 
 @section('title', 'Configurateur Coffret Chantier — BALS')
@@ -16,146 +5,553 @@
 @section('content')
 <div>
 
-    {{-- Titre "Configurateur de devis" + sous-titre --}}
     @include('configurateur.partials.header')
-
-    {{-- Onglets de navigation entre les 5 types de configurateur --}}
     @include('configurateur.partials.nav-type', ['activeType' => 'chantier'])
-
-    {{-- Barre de progression (mise à jour par chantier.js) --}}
     @include('configurateur.partials.progress-bar')
 
-    {{-- Grille principale : formulaire (2/3) + résumé (1/3) --}}
     <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {{-- ── Colonne gauche : Formulaire ── --}}
         <div class="lg:col-span-2 space-y-4">
 
-            {{-- Section 1 : Identification --}}
-            <x-configurateur.section id="s1" number="1" title="Information de contact">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label class="block">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Société / Distributeur</span>
-                        <input id="societe" type="text" oninput="mettreAJour()" placeholder="Ex : ELECTRO DIST SUD"
-                               class="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue">
-                    </label>
-                    <label class="block">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Contact</span>
-                        <input id="contact" type="text" oninput="mettreAJour()" placeholder="Ex : Jean MARTIN"
-                               class="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue">
-                    </label>
-                    <label class="block">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Installateur</span>
-                        <input id="installateur" type="text" oninput="mettreAJour()" placeholder="Ex : ELEC PRO"
-                               class="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue">
-                    </label>
-                    <label class="block">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Affaire / Référence</span>
-                        <input id="affaire" type="text" oninput="mettreAJour()" placeholder="Ex : Chantier Lyon 2025"
-                               class="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue">
-                    </label>
-                    <label class="block sm:col-span-2">
-                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Email de contact</span>
-                        <input id="email" type="email" oninput="mettreAJour()" placeholder="contact@societe.fr"
-                               class="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue">
-                    </label>
+        {{-- ====================================================== --}}
+        {{-- SECTION 01 : INFORMATIONS DE CONTACT                   --}}
+        {{-- ====================================================== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                 onclick="toggleSection('s1')">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                        01
+                    </span>
+                    <span class="font-bold text-lg">Informations de Contact</span>
                 </div>
-            </x-configurateur.section>
+                <span id="arrow-s1" class="text-white text-lg transition-transform duration-300">▲</span>
+            </div>
 
-            {{-- Section 2 : Configuration du coffret --}}
-            <x-configurateur.section id="s2" number="2" title="Caractéristique technique général">
-                <div class="space-y-5">
-                    <x-configurateur.radio-group
-                        label="Type de montage"
-                        name="montage"
-                        :options="['Mobile', 'Fixe au sol', 'Fixe au mur']"
-                    />
-                    <x-configurateur.radio-group
-                        label="Matériaux du coffret"
-                        name="materiau"
-                        :options="['Caoutchouc', 'Polycarbonate', 'Polyester', 'Acier inoxydable']"
-                    />
-                    <x-configurateur.radio-group
-                        label="Indice de protection (IP)"
-                        name="ip"
-                        :options="['IP44', 'IP54', 'IP55', 'IP65', 'IP67']"
-                        :bold="true"
-                    />
+            <div id="section-s1" class="p-6 flex flex-col gap-5">
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Société</label>
+                    <input type="text"
+                           id="societe"
+                           placeholder="Nom de la société"
+                           oninput="mettreAJour()"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue focus:border-transparent transition-all bg-gray-50">
                 </div>
-            </x-configurateur.section>
 
-            {{-- Section 3 : Prises électriques avec sélecteur de tension et quantité --}}
-            <x-configurateur.section id="s3" number="3" title="Caractéristiques technique des prises">
-                @php
-                // Tableau des prises disponibles pour ce coffret chantier
-                $prises = [
-                    ['label' => '2P+T 10/16A',           'type' => '2P+T 16A',    'brochage' => ''],
-                    ['label' => '2P+T 16A (CEE 7/4)',     'type' => '2P+T 16A',    'brochage' => 'CEE 7/4'],
-                    ['label' => '3P+N+T 16A (CEE)',       'type' => '3P+N+T 16A',  'brochage' => 'CEE'],
-                    ['label' => '3P+N+T 32A (CEE)',       'type' => '3P+N+T 32A',  'brochage' => 'CEE'],
-                    ['label' => '3P+N+T 63A (CEE)',       'type' => '3P+N+T 63A',  'brochage' => 'CEE'],
-                    ['label' => '3P+N+T 125A (CEE)',      'type' => '3P+N+T 125A', 'brochage' => 'CEE'],
-                ];
-                @endphp
-                @foreach($prises as $prise)
-                <div class="flex items-center justify-between gap-4 border border-gray-100 rounded-xl px-4 py-3">
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-700">{{ $prise['label'] }}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <select data-type="{{ $prise['type'] }}" data-brochage="{{ $prise['brochage'] }}" data-field="tension"
-                                onchange="mettreAJour()"
-                                class="rounded-lg border border-gray-200 text-xs px-2 py-1.5 text-gray-600">
-                            <option value="">Tension</option>
-                            <option value="110V">110V</option>
-                            <option value="230V">230V</option>
-                            <option value="400V">400V</option>
-                        </select>
-                        <div class="flex items-center gap-1">
-                            <button onclick="changerQte(this, -1)" class="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 font-bold text-gray-600 flex items-center justify-center transition-colors">−</button>
-                            <span data-type="{{ $prise['type'] }}" data-brochage="{{ $prise['brochage'] }}"
-                                  class="w-8 text-center font-black text-sm text-gray-800">0</span>
-                            <button onclick="changerQte(this, 1)" class="w-7 h-7 rounded-lg bg-bals-blue hover:opacity-90 font-bold text-white flex items-center justify-center transition-colors">+</button>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Contact de la Société</label>
+                    <input type="text"
+                           id="contact"
+                           placeholder="Nom du contact"
+                           oninput="mettreAJour()"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue focus:border-transparent transition-all bg-gray-50">
                 </div>
-                @endforeach
-            </x-configurateur.section>
 
-            {{-- Section 4 : Protections électriques --}}
-            <x-configurateur.section id="s4" number="4" title="Protections">
-                <div class="space-y-4">
-                    <x-configurateur.checkbox-group
-                        label="Protection en tête"
-                        name="prot_tete"
-                        :options="['Différentiel 30mA', 'Différentiel 300mA', 'Disjoncteur général', 'Parafoudre', 'Sans']"
-                    />
-                    <x-configurateur.checkbox-group
-                        label="Protection par prise"
-                        name="prot_prises"
-                        :options="['Disjoncteur 16A', 'Disjoncteur 32A', 'Fusible 16A', 'Fusible 32A', 'Sans']"
-                    />
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Installateur</label>
+                    <input type="text"
+                           id="installateur"
+                           placeholder="Nom de l'installateur"
+                           oninput="mettreAJour()"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue focus:border-transparent transition-all bg-gray-50">
                 </div>
-            </x-configurateur.section>
 
-            {{-- Section 5 : Observations (badge gris = section optionnelle) --}}
-            <x-configurateur.section id="s5" number="5" title="Observations" :accent="false">
-                <textarea id="observations" oninput="mettreAJour()" rows="4"
-                          placeholder="Précisions complémentaires, contraintes particulières..."
-                          class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue resize-none"></textarea>
-                <p class="text-xs text-gray-400 mt-1 text-right"><span id="nb-caracteres">0</span> caractères</p>
-            </x-configurateur.section>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Référence Affaire</label>
+                    <input type="text"
+                           id="affaire"
+                           placeholder="Référence de l'affaire"
+                           oninput="mettreAJour()"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue focus:border-transparent transition-all bg-gray-50">
+                </div>
 
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
+                    <input type="email"
+                           id="email"
+                           placeholder="contact@exemple.fr"
+                           oninput="mettreAJour()"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue focus:border-transparent transition-all bg-gray-50">
+                </div>
+            </div>
         </div>
 
-        {{-- ── Colonne droite : Panneau résumé (sticky) ── --}}
+        {{-- ====================================================== --}}
+        {{-- SECTION 02 : CARACTÉRISTIQUES TECHNIQUES GÉNÉRAL       --}}
+        {{-- ====================================================== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                 onclick="toggleSection('s2')">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                        02
+                    </span>
+                    <span class="font-bold text-lg">Caractéristiques Techniques général</span>
+                </div>
+                <span id="arrow-s2" class="text-white text-lg transition-transform duration-300">▲</span>
+            </div>
+
+            <div id="section-s2" class="p-6 flex flex-col gap-7">
+
+                {{-- ---- TYPE DE COFFRET ---- --}}
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-3">
+                        Type de coffret <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="grid grid-cols-3 gap-3" id="type-montage">
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="montage" value="Fixe" class="sr-only peer" onchange="mettreAJour()">
+                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-bold text-sm text-gray-700">Fixe</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="montage" value="Mobile" class="sr-only peer" onchange="mettreAJour()" checked>
+                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-bold text-sm text-gray-700">Mobile</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="montage" value="Mobile sur pied" class="sr-only peer" onchange="mettreAJour()">
+                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-bold text-sm text-gray-700">Mobile sur pied</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- ---- MATÉRIAUX ---- --}}
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-3">
+                        Matériaux <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        @foreach(['Caoutchouc', 'Métallique', 'Plastique'] as $mat)
+                        <label class="cursor-pointer">
+                            <input type="radio" name="materiau" value="{{ $mat }}" class="sr-only peer" onchange="mettreAJour()">
+                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-bold text-sm text-gray-700">{{ $mat }}</span>
+                            </div>
+                        </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- ---- INDICE DE PROTECTION IP ---- --}}
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-3">
+                        Indice de Protection (IP) <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="grid grid-cols-3 gap-3">
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ip" value="IP44" class="sr-only peer" onchange="mettreAJour()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-black text-bals-blue">IP44</span>
+                                <span class="text-gray-400 text-xs ml-1">Projections d'eau</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ip" value="IP54" class="sr-only peer" onchange="mettreAJour()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-black text-bals-blue">IP54</span>
+                                <span class="text-gray-400 text-xs ml-1">Poussières + projections</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ip" value="IP67" class="sr-only peer" onchange="mettreAJour()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                                <span class="font-black text-bals-blue">IP67</span>
+                                <span class="text-gray-400 text-xs ml-1">Immersion temporaire</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ====================================================== --}}
+        {{-- SECTION 03 : CARACTÉRISTIQUES TECHNIQUES DES PRISES    --}}
+        {{-- ====================================================== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            {{-- En-tête cliquable --}}
+            <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                 onclick="toggleSection('s3')">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                        03
+                    </span>
+                    <span class="font-bold text-lg">Caractéristiques Techniques des prises</span>
+                </div>
+                <span id="arrow-s3" class="text-white text-lg transition-transform duration-300">▼</span>
+            </div>
+
+            {{-- Contenu CACHÉ au départ (hidden) --}}
+            <div id="section-s3" class="hidden p-6 space-y-6">
+
+                {{-- ── CARTE NF ── --}}
+                <div class="rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                        <span class="font-black text-gray-800 text-lg">Prises domestiques NF</span>
+                    </div>
+
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-bals-blue text-white">
+                            <tr>
+                                <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">Brochage</th>
+                                <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">Quantité</th>
+                                <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white">
+                                <td class="px-5 py-4 font-bold text-gray-400 text-sm border-r border-gray-100 w-28">—</td>
+                                <td class="px-5 py-4 border-r border-gray-100">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button" onclick="changerQte(this, -1)"
+                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
+                                        <span class="w-10 text-center font-bold text-gray-800 text-sm" data-type="NF">0</span>
+                                        <button type="button" onclick="changerQte(this, 1)"
+                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
+                                        data-type="NF" data-field="tension" onchange="mettreAJour()">
+                                        <option value="">--</option>
+                                        <option value="230V">230V</option>
+                                        <option value="400V">400V</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- ── CARTES CEI (16A, 32A, 63A, 125A) générées par @foreach ── --}}
+                @foreach(['Prises domestiques CEI 16A', 'Prises domestiques CEI 32A', 'Prises domestiques CEI 63A', 'Prises domestiques CEI 125A'] as $cei)
+                <div class="rounded-xl border border-gray-200 overflow-hidden">
+
+                    {{-- En-tête de la carte --}}
+                    <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                        <span class="font-black text-bals-blue text-lg">{{ $cei }}</span>
+                    </div>
+
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-bals-blue text-white">
+                            <tr>
+                                <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">Brochage</th>
+                                <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">Quantité</th>
+                                <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(['2P+T', '3P+T', '3P+N+T'] as $brochage)
+                            <tr class="{{ !$loop->last ? 'border-b border-gray-100' : '' }} {{ $loop->even ? 'bg-gray-50' : 'bg-white' }}">
+
+                                {{-- Brochage --}}
+                                <td class="px-5 py-4 font-black text-bals-blue text-sm border-r border-gray-100 w-28">
+                                    {{ $brochage }}
+                                </td>
+
+                                {{-- Quantité --}}
+                                <td class="px-5 py-4 border-r border-gray-100">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button" onclick="changerQte(this, -1)"
+                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
+                                        <span class="w-10 text-center font-bold text-gray-800 text-sm"
+                                            data-type="{{ $cei }}"
+                                            data-brochage="{{ $brochage }}">0</span>
+                                        <button type="button" onclick="changerQte(this, 1)"
+                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
+                                    </div>
+                                </td>
+
+                                {{-- Tension --}}
+                                <td class="px-5 py-4">
+                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
+                                        data-type="{{ $cei }}"
+                                        data-brochage="{{ $brochage }}"
+                                        data-field="tension"
+                                        onchange="mettreAJour()">
+                                        <option value="">--</option>
+                                        <option value="230V">230V</option>
+                                        <option value="400V">400V</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @endforeach
+
+                    {{-- ── CARTE CEI 24A ── --}}
+                    <div class="rounded-xl border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                            <span class="font-black text-bals-blue text-lg">Prise Domestiques CEI 24A</span>
+                        </div>
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-bals-blue text-white">
+                                <tr>
+                                    <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">Brochage</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">Quantité</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(['2P', '3P'] as $brochage)
+                                <tr class="{{ !$loop->last ? 'border-b border-gray-100' : '' }} {{ $loop->even ? 'bg-gray-50' : 'bg-white' }}">
+                                    {{-- Brochage --}}
+                                    <td class="px-5 py-4 font-black text-bals-blue text-sm border-r border-gray-100 w-28">
+                                        {{ $brochage }}
+                                    </td>
+                                    {{-- Quantité --}}
+                                    <td class="px-5 py-4 border-r border-gray-100">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button type="button" onclick="changerQte(this, -1)"
+                                                class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
+                                            <span class="w-10 text-center font-bold text-gray-800 text-sm"
+                                                data-type="CEI 24A"
+                                                data-brochage="{{ $brochage }}">0</span>
+                                            <button type="button" onclick="changerQte(this, 1)"
+                                                class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
+                                        </div>
+                                    </td>
+                                    {{-- Tension --}}
+                                    <td class="px-5 py-4">
+                                        <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
+                                            data-type="CEI 24A"
+                                            data-brochage="{{ $brochage }}"
+                                            data-field="tension"
+                                            onchange="mettreAJour()">
+                                            <option value="">--</option>
+                                            <option value="24V">24V</option>
+                                            <option value="48V">48V</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+            </div>
+        </div>
+
+        {{-- ====================================================== --}}
+        {{-- SECTION 04 : PROTECTION DE TÊTE                       --}}
+        {{-- ====================================================== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                 onclick="toggleSection('s4')">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                        04
+                    </span>
+                    <span class="font-bold text-lg">Protection de Tête</span>
+                </div>
+                <span id="arrow-s4" class="text-white text-lg transition-transform duration-300">▼</span>
+            </div>
+
+            <div id="section-s4" class="hidden p-6">
+
+                <p class="text-xs text-gray-400 mb-4 italic">
+                    La protection de tête protège l'ensemble du coffret.
+                    Elle est placée en amont de toutes les prises.
+                </p>
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_tete[]" value="Sans" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center shrink-0 peer-checked:bg-bals-blue peer-checked:border-bals-blue">
+                            </div>
+                            <span class="text-sm font-bold text-gray-700">Sans</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_tete[]" value="Interrupteur" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Interrupteur</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_tete[]" value="Inter différentiel" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Inter différentiel</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_tete[]" value="Disjoncteur" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Disjoncteur</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_tete[]" value="Disjoncteur Diff." class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Disjoncteur Diff.</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_tete[]" value="Arrêt d'urgence" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-red-600">Arrêt d'urgence</span>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ====================================================== --}}
+        {{-- SECTION 05 : PROTECTION DES PRISES                     --}}
+        {{-- ====================================================== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                 onclick="toggleSection('s5')">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                        05
+                    </span>
+                    <span class="font-bold text-lg">Protection des Prises</span>
+                </div>
+                <span id="arrow-s5" class="text-white text-lg transition-transform duration-300">▼</span>
+            </div>
+
+            <div id="section-s5" class="hidden p-6">
+
+                <p class="text-xs text-gray-400 mb-4 italic">
+                    La protection des prises protège chaque prise individuellement
+                    ou par groupe de prises.
+                </p>
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_prises[]" value="Sans" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Sans</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_prises[]" value="Par prise" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Par prise</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer col-span-2">
+                        <input type="checkbox" name="prot_prises[]" value="Par groupe de prises" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Par groupe de prises</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_prises[]" value="Disjoncteur" class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Disjoncteur</span>
+                        </div>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="prot_prises[]" value="Disjoncteur Diff." class="peer sr-only" onchange="mettreAJour()">
+                        <div class="border-2 border-gray-200 rounded-xl p-3 flex items-center gap-3 transition-all peer-checked:border-bals-blue peer-checked:bg-blue-50 hover:border-bals-blue cursor-pointer">
+                            <div class="w-5 h-5 rounded border-2 border-gray-300 shrink-0"></div>
+                            <span class="text-sm font-bold text-gray-700">Disjoncteur Diff.</span>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ====================================================== --}}
+        {{-- SECTION 06 : OBSERVATIONS                              --}}
+        {{-- ====================================================== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+            <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                 onclick="toggleSection('s6')">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                        06
+                    </span>
+                    <span class="font-bold text-lg">Observations</span>
+                </div>
+                <span id="arrow-s6" class="text-white text-lg transition-transform duration-300">▼</span>
+            </div>
+
+            <div id="section-s6" class="hidden p-6">
+
+                <p class="text-xs text-gray-400 mb-4 italic">
+                    Ajoutez ici toutes les remarques, besoins spécifiques
+                    ou informations complémentaires pour votre devis.
+                </p>
+
+                <textarea
+                    id="observations"
+                    name="observations"
+                    rows="6"
+                    placeholder="Ex : Besoin d'un coffret étanche pour un usage extérieur, câblage spécifique, délai de livraison souhaité..."
+                    oninput="mettreAJour()"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-bals-blue focus:border-transparent transition-all bg-gray-50 resize-y">
+                </textarea>
+
+                <p class="text-xs text-gray-400 mt-2 text-right">
+                    <span id="nb-caracteres">0</span> caractère(s)
+                </p>
+
+            </div>
+        </div>
+
+        </div>{{-- fin lg:col-span-2 --}}
+
         @include('configurateur.partials.panneau-resume')
 
-    </div>
+    </div>{{-- fin grid --}}
 </div>
+
 @endsection
 
+
+{{-- ============================================================ --}}
+{{-- SECTION SCRIPTS : JavaScript de la page                      --}}
+{{-- ============================================================ --}}
 @section('scripts')
-{{-- chantier.js est partagé avec industrie.blade.php (lit le type actif depuis la nav) --}}
-<script src="{{ asset('configurateur/js/chantier.js') }}"></script>
+
+    <script src="{{ asset('configurateur/js/configurateur.js') }}"></script>
+    <script src="{{ asset('configurateur/js/chantier.js') }}"></script>
 @endsection
