@@ -551,7 +551,8 @@
 {{-- SECTION SCRIPTS : JavaScript de la page                      --}}
 {{-- ============================================================ --}}
 @section('scripts')
-
-    <script src="{{ asset('configurateur/js/configurateur.js') }}"></script>
-    <script src="{{ asset('configurateur/js/chantier.js') }}"></script>
+<script>
+    window.COFFRET = { nom: 'Coffret Chantier', type: 'coffret' };
+</script>
+<script src="{{ asset('configurateur/js/configurateur.js') }}"></script>
 @endsection
