@@ -240,49 +240,51 @@
             <div id="section-s3" class="hidden p-6">
                 <div class="flex flex-col gap-6">
 
-                {{-- ── CARTE NF ── --}}
-                <div class="rounded-xl border border-gray-200 overflow-hidden">
-                    <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                        <span class="font-black text-gray-800 text-lg">Prises domestiques NF</span>
-                    </div>
-                    <table class="min-w-full text-sm">
-                        <thead class="bg-bals-blue text-white">
-                            <tr>
-                                <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">Brochage</th>
-                                <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">Quantité</th>
-                                <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-white">
-                                <td class="px-5 py-4 font-bold text-gray-400 text-sm border-r border-gray-100 w-28">10/16A</td>
-                                <td class="px-5 py-4 border-r border-gray-100">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <button type="button" onclick="changerQte(this, -1)"
-                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
-                                        {{-- ✅ BUG 3 CORRIGÉ : data-type et data-brochage pour ciblage précis --}}
-                                        <span class="w-10 text-center font-bold text-gray-800 text-sm"
-                                              data-type="NF"
-                                              data-brochage="10-16A">0</span>
-                                        <button type="button" onclick="changerQte(this, 1)"
-                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-4">
-                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                        data-type="NF"
-                                        data-brochage="10-16A"
-                                        data-field="tension"
-                                        onchange="mettreAJour()">
-                                        <option value="">--</option>
-                                        <option value="230V">230V</option>
-                                        <option value="400V">400V</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                         {{-- ── CARTE NF ── --}}
+                            <div class="rounded-xl border border-gray-200 overflow-hidden">
+                                <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                                    <span class="font-black text-gray-800 text-lg">Prises NF</span>
+                                </div>
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-bals-blue text-white">
+                                        <tr>
+                                            <th
+                                                class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">
+                                                Brochage</th>
+                                            <th
+                                                class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">
+                                                Quantité</th>
+                                            <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="bg-white">
+                                            <td
+                                                class="px-5 py-4 font-bold text-gray-400 text-sm border-r border-gray-100 w-28">
+                                                —</td>
+                                            <td class="px-5 py-4 border-r border-gray-100">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <button type="button" onclick="changerQte(this, -1)"
+                                                        class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
+                                                    <span class="w-10 text-center font-bold text-gray-800 text-sm"
+                                                        data-type="NF" data-brochage="—">0</span>
+                                                    <button type="button" onclick="changerQte(this, 1)"
+                                                        class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
+                                                </div>
+                                            </td>
+                                            <td class="px-5 py-4">
+                                                <div
+                                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50">
+                                                    <span>230V</span>
+
+                                                    <input type="hidden" data-type="NF" data-brochage="—"
+                                                        data-field="tension" value="230V">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                 {{-- ── CARTES CEI (16A, 32A, 63A, 125A) ── --}}
                 @foreach(['Prises domestiques CEI 16A', 'Prises domestiques CEI 32A', 'Prises domestiques CEI 63A', 'Prises domestiques CEI 125A'] as $cei)
@@ -317,15 +319,26 @@
                                     </div>
                                 </td>
                                 <td class="px-5 py-4">
-                                    <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                        data-type="{{ $cei }}"
-                                        data-brochage="{{ $brochage }}"
-                                        data-field="tension"
-                                        onchange="mettreAJour()">
-                                        <option value="">--</option>
-                                        <option value="230V">230V</option>
-                                        <option value="400V">400V</option>
-                                    </select>
+                                    @if ($brochage === '2P+T')
+                                        {{-- 2P+T = monophasé : toujours 230V, non modifiable --}}
+                                        <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                            <span class="font-semibold">230V</span>
+                                            <input type="hidden"
+                                                data-type="{{ $cei }}"
+                                                data-brochage="{{ $brochage }}"
+                                                data-field="tension"
+                                                value="230V">
+                                        </div>
+                                    @else
+                                        <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
+                                            data-type="{{ $cei }}"
+                                            data-brochage="{{ $brochage }}"
+                                            data-field="tension"
+                                            onchange="mettreAJour()">
+                                            <option value="">--</option>
+                                            <option value="400V">400V</option>
+                                        </select>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -380,6 +393,146 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- ====================================================== --}}
+                {{-- SECTION ALIMENTATION : Protection de Tête, Bornier,   --}}
+                {{-- Socle Connecteur, Câble, Câble + Fiche                 --}}
+                {{-- ====================================================== --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+                    <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                        onclick="toggleSection('s-alim')">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                                AE
+                            </span>
+                            <span class="font-bold text-lg">Alimentation & Éléments</span>
+                        </div>
+                        <span id="arrow-s-alim" class="text-white text-lg transition-transform duration-300">▼</span>
+                    </div>
+
+                    <div id="section-s-alim" class="hidden p-6 space-y-6">
+
+                        @foreach (['Protection de Tête', 'Bornier', 'Socle Connecteur', 'Câble', 'Câble + Fiche'] as $alim)
+                            <div class="rounded-xl border border-gray-200 overflow-hidden">
+
+                                <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                                    <span class="font-black text-bals-blue text-lg">{{ $alim }}</span>
+                                </div>
+
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-bals-blue text-white">
+                                        <tr>
+                                            <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">
+                                                Alimentation</th>
+                                            <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">
+                                                Quantité</th>
+                                            <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (['2P+T', '3P+T', '3P+N+T'] as $brochage)
+                                            <tr class="{{ !$loop->last ? 'border-b border-gray-100' : '' }} {{ $loop->even ? 'bg-gray-50' : 'bg-white' }}">
+
+                                                <td class="px-5 py-4 font-black text-bals-blue text-sm border-r border-gray-100 w-28">
+                                                    {{ $brochage }}
+                                                </td>
+
+                                                <td class="px-5 py-4 border-r border-gray-100">
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        <button type="button" onclick="changerQteAlim(this, -1)"
+                                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
+                                                        <span class="w-10 text-center font-bold text-gray-800 text-sm"
+                                                            data-alim="{{ $alim }}"
+                                                            data-brochage="{{ $brochage }}">0</span>
+                                                        <button type="button" onclick="changerQteAlim(this, 1)"
+                                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
+                                                    </div>
+                                                </td>
+
+                                                <td class="px-5 py-4">
+                                                    @if ($brochage === '2P+T')
+                                                        <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                                            <span class="font-semibold">230V</span>
+                                                            <input type="hidden"
+                                                                data-alim="{{ $alim }}"
+                                                                data-brochage="{{ $brochage }}"
+                                                                data-field="tension-alim"
+                                                                value="230V">
+                                                        </div>
+                                                    @else
+                                                        <select
+                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
+                                                            data-alim="{{ $alim }}"
+                                                            data-brochage="{{ $brochage }}"
+                                                            data-field="tension-alim"
+                                                            onchange="mettreAJour()">
+                                                            <option value="">--</option>
+                                                            <option value="400V">400V</option>
+                                                        </select>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endforeach
+
+                    </div>
+                </div>
+
+                {{-- ====================================================== --}}
+                {{-- SECTION 07 : PIÈCES JOINTES                            --}}
+                {{-- ====================================================== --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+                    <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                        onclick="toggleSection('s7')">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">07</span>
+                            <span class="font-bold text-lg">Pièces Jointes</span>
+                        </div>
+                        <span id="arrow-s7" class="text-white text-lg transition-transform duration-300">▼</span>
+                    </div>
+
+                    <div id="section-s7" class="hidden p-6">
+
+                        <p class="text-xs text-gray-400 mb-4 italic">
+                            Joignez vos plans, schémas ou tout document utile à la configuration
+                            (PDF, JPG, PNG — max 10 Mo par fichier).
+                        </p>
+
+                        {{-- Zone de drop --}}
+                        <div id="drop-zone"
+                            class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center
+                   cursor-pointer hover:border-bals-blue hover:bg-blue-50 transition-all"
+                            onclick="document.getElementById('fichiers-input').click()"
+                            ondragover="event.preventDefault(); this.classList.add('border-bals-blue','bg-blue-50')"
+                            ondragleave="this.classList.remove('border-bals-blue','bg-blue-50')"
+                            ondrop="gererDrop(event)">
+
+                            <svg class="mx-auto mb-3 w-10 h-10 text-gray-300" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <p class="text-sm font-bold text-gray-500">Glissez vos fichiers ici</p>
+                            <p class="text-xs text-gray-400 mt-1">ou cliquez pour parcourir</p>
+
+                            {{-- L'input est invisible, déclenché par le click sur la zone --}}
+                            <input type="file" id="fichiers-input" name="fichiers[]" multiple
+                                accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="ajouterFichiers(this.files)">
+                        </div>
+
+                        {{-- Liste des fichiers sélectionnés --}}
+                        <ul id="liste-fichiers" class="mt-4 flex flex-col gap-2"></ul>
+
+                    </div>
+                </div>
+
 
                 </div>{{-- fin flex flex-col gap-6 --}}
             </div>

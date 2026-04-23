@@ -51,7 +51,82 @@ function changerQte(btnOuDelta, direction) {
         if (!span) return;
         span.textContent = Math.max(0, (parseInt(span.textContent) || 0) + direction);
     }
+    gererInteractiviteTension();
     mettreAJour();
+}
+
+
+// ────────────────────────────────────────────────────────────────────────
+// 2b. INTERACTIVITÉ TENSION — quand une prise 2P+T est sélectionnée,
+//     les prises 3P+T et 3P+N+T passent automatiquement en 400V
+// ────────────────────────────────────────────────────────────────────────
+function gererInteractiviteTension() {
+    var section = document.getElementById('section-s3');
+    if (!section) return;
+
+    // Vérifier si au moins une prise 2P+T a une quantité > 0
+    var spans2PT = section.querySelectorAll('span[data-brochage="2P+T"]');
+    var has2PT = false;
+    spans2PT.forEach(function(span) {
+        if (parseInt(span.textContent) > 0) has2PT = true;
+    });
+
+    if (has2PT) {
+        // Auto-sélectionner 400V sur tous les <select> 3P+T et 3P+N+T
+        // (les champs vides seulement, pour ne pas écraser un choix déjà fait)
+        var selects = section.querySelectorAll(
+            'select[data-field="tension"][data-brochage="3P+T"],' +
+            'select[data-field="tension"][data-brochage="3P+N+T"]'
+        );
+        selects.forEach(function(select) {
+            if (select.value === '') select.value = '400V';
+        });
+    }
+}
+
+
+// ────────────────────────────────────────────────────────────────────────
+// 2c. QUANTITÉ ALIMENTATION — boutons + / − pour la section Alimentation
+// ────────────────────────────────────────────────────────────────────────
+function changerQteAlim(btn, delta) {
+    var span = btn.parentElement.querySelector('span[data-alim]');
+    if (!span) return;
+    span.textContent = Math.max(0, (parseInt(span.textContent) || 0) + delta);
+    mettreAJour();
+}
+
+
+// ────────────────────────────────────────────────────────────────────────
+// 3b. LIRE LES ALIMENTATIONS — section Alimentation & Éléments
+//
+//    Retourne un tableau d'objets : { type, brochage, quantite, tension }
+// ────────────────────────────────────────────────────────────────────────
+function lireAlimentations() {
+    var alimentations = [];
+    var section = document.getElementById('section-s-alim');
+    if (!section) return alimentations;
+
+    section.querySelectorAll('span[data-alim]').forEach(function(span) {
+        var qte = parseInt(span.textContent) || 0;
+        if (qte === 0) return;
+
+        var alim     = span.dataset.alim;
+        var brochage = span.dataset.brochage || '';
+
+        var filtre    = '[data-alim="' + alim + '"]'
+                      + (brochage ? '[data-brochage="' + brochage + '"]' : '')
+                      + '[data-field="tension-alim"]';
+        var tensionEl = document.querySelector(filtre);
+
+        alimentations.push({
+            type:     alim,
+            brochage: brochage,
+            quantite: qte,
+            tension:  tensionEl ? tensionEl.value : ''
+        });
+    });
+
+    return alimentations;
 }
 
 
@@ -92,6 +167,30 @@ function lirePrises() {
 
 
 // ────────────────────────────────────────────────────────────────────────
+// 3c. POLARITÉ → TENSION (prise-industrielle uniquement)
+//     2P+T (monophasé) → auto-sélectionne 230V
+//     3P / 3P+N+T (triphasé) → auto-sélectionne 400V
+// ────────────────────────────────────────────────────────────────────────
+function gererPolaritePI() {
+    var pol = _selectionne('pol');
+    var cible = null;
+
+    if (pol === '2P+T') {
+        cible = '230V (50-60Hz)';
+    } else if (pol === '3P' || pol === '3P+N+T') {
+        cible = '400V (50-60Hz)';
+    }
+
+    if (cible) {
+        var radio = document.querySelector('input[name="tension"][value="' + cible + '"]');
+        if (radio && !radio.checked) radio.checked = true;
+    }
+
+    mettreAJour();
+}
+
+
+// ────────────────────────────────────────────────────────────────────────
 // 4. TYPE DE PRODUIT — afficher / masquer le type de montage
 //    (prise-industrielle uniquement)
 // ────────────────────────────────────────────────────────────────────────
@@ -128,14 +227,14 @@ function mettreAJour() {
 
     // Déléguer à la fonction correspondant au type de page
     if (config.type === 'prise') {
-        _mettreAJourPrise(config, observations);
+        _mettreAJourPrise(config);
     } else {
-        _mettreAJourCoffret(config, observations);
+        _mettreAJourCoffret(config);
     }
 }
 
 // ── Résumé pour les coffrets (industrie / chantier / étage / événementiel) ──
-function _mettreAJourCoffret(config, observations) {
+function _mettreAJourCoffret(config) {
 
     // Champs de contact — les noms varient selon le coffret :
     //   industrie/chantier  → societe, contact
@@ -153,10 +252,11 @@ function _mettreAJourCoffret(config, observations) {
     var materiau = _selectionne('materiau');
     var ip       = _selectionne('ip');
 
-    // Protections et prises
-    var protTete   = _multiselectionne('prot_tete[]');
-    var protPrises = _multiselectionne('prot_prises[]');
-    var prises     = lirePrises();
+    // Protections, prises et alimentations
+    var protTete     = _multiselectionne('prot_tete[]');
+    var protPrises   = _multiselectionne('prot_prises[]');
+    var prises       = lirePrises();
+    var alimentations = lireAlimentations();
 
     // Progression : 5 champs principaux
     var remplis = _compterRemplis([identite, email, montage, materiau, ip]);
@@ -165,7 +265,7 @@ function _mettreAJourCoffret(config, observations) {
     var zone = document.getElementById('resume-zone');
     if (!zone) return;
 
-    if (remplis === 0 && prises.length === 0 && protTete.length === 0) {
+    if (remplis === 0 && prises.length === 0 && alimentations.length === 0 && protTete.length === 0) {
         zone.innerHTML = '<p class="text-bals-blue font-bold text-sm opacity-40">Configurez votre coffret</p>'
                        + '<p class="text-gray-400 text-xs mt-1">Les informations apparaîtront ici</p>';
         _afficherBoutons(false);
@@ -207,6 +307,16 @@ function _mettreAJourCoffret(config, observations) {
               + '<p class="text-xs font-bold text-gray-700">' + listePrises + '</p></div>';
     }
 
+    if (alimentations.length > 0) {
+        var listeAlim = alimentations.map(function(a) {
+            return a.quantite + 'x ' + a.type + ' ' + a.brochage
+                 + (a.tension ? ' ' + a.tension : '');
+        }).join('<br>');
+        html += '<div class="border-t border-gray-100 pt-2">'
+              + '<p class="text-xs text-gray-400 font-bold mb-1">Alimentation :</p>'
+              + '<p class="text-xs font-bold text-gray-700">' + listeAlim + '</p></div>';
+    }
+
     if (protTete.length > 0) {
         html += '<div class="border-t border-gray-100 pt-2">'
               + '<p class="text-xs text-gray-400 font-bold mb-1">Prot. de tête :</p>'
@@ -225,7 +335,7 @@ function _mettreAJourCoffret(config, observations) {
 }
 
 // ── Résumé pour la prise industrielle ───────────────────────────────────
-function _mettreAJourPrise(config, observations) {
+function _mettreAJourPrise(config) {
     var societe      = _valeur('societe');
     var contact      = _valeur('contact');
     var installateur = _valeur('installateur');
@@ -329,8 +439,18 @@ function reinitialiser() {
         span.textContent = '0';
     });
 
+    // Remettre les compteurs d'alimentation à 0
+    document.querySelectorAll('span[data-alim]').forEach(function(span) {
+        span.textContent = '0';
+    });
+
     // Réinitialiser les selects de tension (coffrets)
     document.querySelectorAll('select[data-field="tension"]').forEach(function(sel) {
+        sel.value = '';
+    });
+
+    // Réinitialiser les selects de tension-alim
+    document.querySelectorAll('select[data-field="tension-alim"]').forEach(function(sel) {
         sel.value = '';
     });
 
@@ -397,6 +517,7 @@ function envoyerDevis() {
                 materiau:           _selectionne('materiau'),
                 ip:                 _selectionne('ip'),
                 prises:             lirePrises(),
+                alimentations:      lireAlimentations(),
                 protections_tete:   _multiselectionne('prot_tete[]'),
                 protections_prises: _multiselectionne('prot_prises[]')
             }
@@ -481,6 +602,85 @@ function _ligneIP(valeur) {
          + '<span class="text-gray-400">IP :</span> '
          + '<span class="font-black text-bals-blue">' + valeur + '</span>'
          + '</p>';
+}
+
+// Tableau qui garde en mémoire les fichiers sélectionnés
+// (un input file seul ne permet pas d'ajouter de façon cumulative)
+let fichiersSelectionnes = new DataTransfer();
+
+/**
+ * Appelé quand l'utilisateur sélectionne des fichiers via le bouton
+ */
+function ajouterFichiers(nouveauxFichiers) {
+    Array.from(nouveauxFichiers).forEach(fichier => {
+        // Évite les doublons par nom
+        const dejaPresent = Array.from(fichiersSelectionnes.files)
+            .some(f => f.name === fichier.name);
+        if (!dejaPresent) {
+            fichiersSelectionnes.items.add(fichier);
+        }
+    });
+
+    // Synchronise l'input réel avec notre DataTransfer
+    document.getElementById('fichiers-input').files = fichiersSelectionnes.files;
+    afficherListeFichiers();
+    mettreAJour(); // met à jour le panneau résumé
+}
+
+/**
+ * Gère le glisser-déposer
+ */
+function gererDrop(event) {
+    event.preventDefault();
+    const zone = document.getElementById('drop-zone');
+    zone.classList.remove('border-bals-blue', 'bg-blue-50');
+    ajouterFichiers(event.dataTransfer.files);
+}
+
+/**
+ * Supprime un fichier de la liste
+ */
+function supprimerFichier(nomFichier) {
+    const dt = new DataTransfer();
+    Array.from(fichiersSelectionnes.files)
+        .filter(f => f.name !== nomFichier)
+        .forEach(f => dt.items.add(f));
+
+    fichiersSelectionnes = dt;
+    document.getElementById('fichiers-input').files = fichiersSelectionnes.files;
+    afficherListeFichiers();
+    mettreAJour();
+}
+
+/**
+ * Affiche la liste des fichiers sous la zone de drop
+ */
+function afficherListeFichiers() {
+    const liste = document.getElementById('liste-fichiers');
+    liste.innerHTML = '';
+
+    Array.from(fichiersSelectionnes.files).forEach(fichier => {
+        const taille = (fichier.size / 1024 / 1024).toFixed(2); // en Mo
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm';
+        li.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-bals-blue font-bold">${iconeType(fichier.type)}</span>
+                <span class="font-medium text-gray-700 truncate max-w-xs">${fichier.name}</span>
+                <span class="text-gray-400 text-xs">${taille} Mo</span>
+            </div>
+            <button type="button" onclick="supprimerFichier('${fichier.name}')"
+                class="text-red-400 hover:text-red-600 font-bold text-lg leading-none">×</button>
+        `;
+        liste.appendChild(li);
+    });
+}
+
+/** Retourne une icône selon le type MIME */
+function iconeType(mime) {
+    if (mime === 'application/pdf') return '📄';
+    if (mime.startsWith('image/')) return '🖼️';
+    return '📎';
 }
 
 

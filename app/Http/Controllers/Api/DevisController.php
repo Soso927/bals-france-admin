@@ -34,4 +34,26 @@ class DevisController extends Controller
 
         return response()->json(['success' => true, 'id' => $devis->id], 201);
     }
+    public function soumettre(Request $request)
+{
+    // Validation des fichiers
+    $request->validate([
+        'fichiers'   => ['nullable', 'array', 'max:5'],       // max 5 fichiers
+        'fichiers.*' => ['file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'], // 10 Mo chacun
+    ]);
+
+    $cheminsFichiers = [];
+
+    if ($request->hasFile('fichiers')) {
+        foreach ($request->file('fichiers') as $fichier) {
+            // Stocke dans storage/app/public/devis/
+            // Le nom est auto-généré pour éviter les collisions
+            $chemin = $fichier->store('devis', 'public');
+            $cheminsFichiers[] = $chemin;
+        }
+    }
+
+    // ... reste de ta logique (création du devis, envoi email, etc.)
+    // $cheminsFichiers contient les chemins relatifs pour les stocker en BDD
+}
 }

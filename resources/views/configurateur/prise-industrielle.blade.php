@@ -258,7 +258,7 @@
                             @foreach(['2P', '2P+T', '3P', '3P+N+T'] as $pol)
                             <label class="cursor-pointer">
                                 <input type="radio" name="pol" value="{{ $pol }}" class="peer sr-only"
-                                       onchange="mettreAJour()">
+                                       onchange="gererPolaritePI()">
                                 <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-bals-blue peer-checked:bg-blue-50 peer-checked:text-bals-blue font-bold text-gray-600 text-xs transition-all hover:border-bals-blue cursor-pointer">
                                     {{ $pol }}
                                 </div>
@@ -353,6 +353,57 @@
                     </div>
                 </div>
             </div>
+            
+                {{-- ====================================================== --}}
+                {{-- SECTION 07 : PIÈCES JOINTES                            --}}
+                {{-- ====================================================== --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+                    <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                        onclick="toggleSection('s7')">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">07</span>
+                            <span class="font-bold text-lg">Pièces Jointes</span>
+                        </div>
+                        <span id="arrow-s7" class="text-white text-lg transition-transform duration-300">▼</span>
+                    </div>
+
+                    <div id="section-s7" class="hidden p-6">
+
+                        <p class="text-xs text-gray-400 mb-4 italic">
+                            Joignez vos plans, schémas ou tout document utile à la configuration
+                            (PDF, JPG, PNG — max 10 Mo par fichier).
+                        </p>
+
+                        {{-- Zone de drop --}}
+                        <div id="drop-zone"
+                            class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center
+                   cursor-pointer hover:border-bals-blue hover:bg-blue-50 transition-all"
+                            onclick="document.getElementById('fichiers-input').click()"
+                            ondragover="event.preventDefault(); this.classList.add('border-bals-blue','bg-blue-50')"
+                            ondragleave="this.classList.remove('border-bals-blue','bg-blue-50')"
+                            ondrop="gererDrop(event)">
+
+                            <svg class="mx-auto mb-3 w-10 h-10 text-gray-300" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <p class="text-sm font-bold text-gray-500">Glissez vos fichiers ici</p>
+                            <p class="text-xs text-gray-400 mt-1">ou cliquez pour parcourir</p>
+
+                            {{-- L'input est invisible, déclenché par le click sur la zone --}}
+                            <input type="file" id="fichiers-input" name="fichiers[]" multiple
+                                accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="ajouterFichiers(this.files)">
+                        </div>
+
+                        {{-- Liste des fichiers sélectionnés --}}
+                        <ul id="liste-fichiers" class="mt-4 flex flex-col gap-2"></ul>
+
+                    </div>
+                </div>
+
 
         </div>{{-- fin lg:col-span-2 --}}
 
