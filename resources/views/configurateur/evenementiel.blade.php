@@ -203,6 +203,102 @@
                 </div>
             </div>
 
+            
+                {{-- ====================================================== --}}
+                {{-- SECTION ALIMENTATION : Protection de Tête, Bornier,   --}}
+                {{-- Socle Connecteur, Câble, Câble + Fiche                 --}}
+                {{-- ====================================================== --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+
+                    <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
+                        onclick="toggleSection('s-alim')">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
+                                03
+                            </span>
+                            <span class="font-bold text-lg">Alimentation</span>
+                        </div>
+                        <span id="arrow-s-alim" class="text-white text-lg transition-transform duration-300">▼</span>
+                    </div>
+
+                    <div id="section-s-alim" class="hidden p-6 space-y-6">
+
+                        @foreach (['Protection de Tête', 'Bornier', 'Socle Connecteur', 'Câble', 'Câble + Fiche'] as $alim)
+                            <div class="rounded-xl border border-gray-200 overflow-hidden">
+
+                                <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                                    <span class="font-black text-bals-blue text-lg">{{ $alim }}</span>
+                                </div>
+
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-bals-blue text-white">
+                                        <tr>
+                                            <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">
+                                                Alimentation</th>
+                                            <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">
+                                                Quantité</th>
+                                            <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (['2P+T', '3P+T', '3P+N+T'] as $brochage)
+                                            <tr class="{{ !$loop->last ? 'border-b border-gray-100' : '' }} {{ $loop->even ? 'bg-gray-50' : 'bg-white' }}">
+
+                                                {{-- Polarité --}}
+                                                <td class="px-5 py-4 font-black text-bals-blue text-sm border-r border-gray-100 w-28">
+                                                    {{ $brochage }}
+                                                </td>
+
+                                                {{-- Quantité --}}
+                                                <td class="px-5 py-4 border-r border-gray-100">
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        <button type="button" onclick="changerQteAlim(this, -1)"
+                                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
+                                                        <span class="w-10 text-center font-bold text-gray-800 text-sm"
+                                                            data-alim="{{ $alim }}"
+                                                            data-brochage="{{ $brochage }}">0</span>
+                                                        <button type="button" onclick="changerQteAlim(this, 1)"
+                                                            class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
+                                                    </div>
+                                                </td>
+
+                                                {{-- Tension --}}
+                                                <td class="px-5 py-4">
+                                                    @if ($brochage === '2P+T')
+                                                        {{-- 2P+T = monophasé : toujours 230V --}}
+                                                        <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                                            <span class="font-semibold">230V</span>
+                                                            <input type="hidden"
+                                                                data-alim="{{ $alim }}"
+                                                                data-brochage="{{ $brochage }}"
+                                                                data-field="tension-alim"
+                                                                value="230V">
+                                                        </div>
+                                                    @else
+                                                        <select
+                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
+                                                            data-alim="{{ $alim }}"
+                                                            data-brochage="{{ $brochage }}"
+                                                            data-field="tension-alim"
+                                                            onchange="mettreAJour()">
+                                                            <option value="">--</option>
+                                                            <option value="400V">400V</option>
+                                                        </select>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endforeach
+
+                    </div>
+                </div>
+
+
+
             {{-- ====================================================== --}}
             {{-- SECTION 03 : CARACTÉRISTIQUES TECHNIQUES DES PRISES    --}}
             {{-- ====================================================== --}}
@@ -355,95 +451,6 @@
                     </div>
 
                     </div>{{-- fin flex flex-col gap-6 --}}
-                </div>
-            </div>
-
-            {{-- ====================================================== --}}
-            {{-- SECTION ALIMENTATION : Protection de Tête, Bornier,   --}}
-            {{-- Socle Connecteur, Câble, Câble + Fiche                 --}}
-            {{-- ====================================================== --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-
-                <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
-                    onclick="toggleSection('s-alim')">
-                    <div class="flex items-center gap-3">
-                        <span
-                            class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">
-                            AE
-                        </span>
-                        <span class="font-bold text-lg">Alimentation & Éléments</span>
-                    </div>
-                    <span id="arrow-s-alim" class="text-white text-lg transition-transform duration-300">▼</span>
-                </div>
-
-                <div id="section-s-alim" class="hidden p-6 space-y-6">
-
-                    @foreach (['Protection de Tête', 'Bornier', 'Socle Connecteur', 'Câble', 'Câble + Fiche'] as $alim)
-                        <div class="rounded-xl border border-gray-200 overflow-hidden">
-
-                            <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                                <span class="font-black text-bals-blue text-lg">{{ $alim }}</span>
-                            </div>
-
-                            <table class="min-w-full text-sm">
-                                <thead class="bg-bals-blue text-white">
-                                    <tr>
-                                        <th class="px-5 py-3 text-left text-xs font-black uppercase border-r border-white/20">
-                                            Alimentation</th>
-                                        <th class="px-5 py-3 text-center text-xs font-semibold border-r border-white/20">
-                                            Quantité</th>
-                                        <th class="px-5 py-3 text-center text-xs font-semibold">Tension</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (['2P+T', '3P+T', '3P+N+T'] as $brochage)
-                                        <tr class="{{ !$loop->last ? 'border-b border-gray-100' : '' }} {{ $loop->even ? 'bg-gray-50' : 'bg-white' }}">
-
-                                            <td class="px-5 py-4 font-black text-bals-blue text-sm border-r border-gray-100 w-28">
-                                                {{ $brochage }}
-                                            </td>
-
-                                            <td class="px-5 py-4 border-r border-gray-100">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <button type="button" onclick="changerQteAlim(this, -1)"
-                                                        class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">−</button>
-                                                    <span class="w-10 text-center font-bold text-gray-800 text-sm"
-                                                        data-alim="{{ $alim }}"
-                                                        data-brochage="{{ $brochage }}">0</span>
-                                                    <button type="button" onclick="changerQteAlim(this, 1)"
-                                                        class="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm font-bold">+</button>
-                                                </div>
-                                            </td>
-
-                                            <td class="px-5 py-4">
-                                                @if ($brochage === '2P+T')
-                                                    <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
-                                                        <span class="font-semibold">230V</span>
-                                                        <input type="hidden"
-                                                            data-alim="{{ $alim }}"
-                                                            data-brochage="{{ $brochage }}"
-                                                            data-field="tension-alim"
-                                                            value="230V">
-                                                    </div>
-                                                @else
-                                                    <select
-                                                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                                        data-alim="{{ $alim }}"
-                                                        data-brochage="{{ $brochage }}"
-                                                        data-field="tension-alim"
-                                                        onchange="mettreAJour()">
-                                                        <option value="">--</option>
-                                                        <option value="400V">400V</option>
-                                                    </select>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endforeach
-
                 </div>
             </div>
 

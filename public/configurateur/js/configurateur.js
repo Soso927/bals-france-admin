@@ -20,7 +20,7 @@
 // ────────────────────────────────────────────────────────────────────────
 function toggleSection(id) {
     var section = document.getElementById('section-' + id);
-    var fleche  = document.getElementById('arrow-' + id);
+    var fleche = document.getElementById('arrow-' + id);
     if (!section) return;
 
     if (section.classList.contains('hidden')) {
@@ -67,7 +67,7 @@ function gererInteractiviteTension() {
     // Vérifier si au moins une prise 2P+T a une quantité > 0
     var spans2PT = section.querySelectorAll('span[data-brochage="2P+T"]');
     var has2PT = false;
-    spans2PT.forEach(function(span) {
+    spans2PT.forEach(function (span) {
         if (parseInt(span.textContent) > 0) has2PT = true;
     });
 
@@ -78,7 +78,7 @@ function gererInteractiviteTension() {
             'select[data-field="tension"][data-brochage="3P+T"],' +
             'select[data-field="tension"][data-brochage="3P+N+T"]'
         );
-        selects.forEach(function(select) {
+        selects.forEach(function (select) {
             if (select.value === '') select.value = '400V';
         });
     }
@@ -106,23 +106,23 @@ function lireAlimentations() {
     var section = document.getElementById('section-s-alim');
     if (!section) return alimentations;
 
-    section.querySelectorAll('span[data-alim]').forEach(function(span) {
+    section.querySelectorAll('span[data-alim]').forEach(function (span) {
         var qte = parseInt(span.textContent) || 0;
         if (qte === 0) return;
 
-        var alim     = span.dataset.alim;
+        var alim = span.dataset.alim;
         var brochage = span.dataset.brochage || '';
 
-        var filtre    = '[data-alim="' + alim + '"]'
-                      + (brochage ? '[data-brochage="' + brochage + '"]' : '')
-                      + '[data-field="tension-alim"]';
+        var filtre = '[data-alim="' + alim + '"]'
+            + (brochage ? '[data-brochage="' + brochage + '"]' : '')
+            + '[data-field="tension-alim"]';
         var tensionEl = document.querySelector(filtre);
 
         alimentations.push({
-            type:     alim,
+            type: alim,
             brochage: brochage,
             quantite: qte,
-            tension:  tensionEl ? tensionEl.value : ''
+            tension: tensionEl ? tensionEl.value : ''
         });
     });
 
@@ -141,24 +141,24 @@ function lireAlimentations() {
 function lirePrises() {
     var prises = [];
 
-    document.querySelectorAll('#section-s3 span[data-type]').forEach(function(span) {
+    document.querySelectorAll('#section-s3 span[data-type]').forEach(function (span) {
         var qte = parseInt(span.textContent) || 0;
         if (qte === 0) return;
 
-        var type     = span.dataset.type;
+        var type = span.dataset.type;
         var brochage = span.dataset.brochage || '';
 
         // Ce sélecteur trouve à la fois <select> et <input type="hidden">
-        var filtre    = '[data-type="' + type + '"]'
-                      + (brochage ? '[data-brochage="' + brochage + '"]' : '')
-                      + '[data-field="tension"]';
+        var filtre = '[data-type="' + type + '"]'
+            + (brochage ? '[data-brochage="' + brochage + '"]' : '')
+            + '[data-field="tension"]';
         var tensionEl = document.querySelector(filtre);
 
         prises.push({
-            type:     type,
+            type: type,
             brochage: brochage,
             quantite: qte,
-            tension:  tensionEl ? tensionEl.value : ''
+            tension: tensionEl ? tensionEl.value : ''
         });
     });
 
@@ -195,8 +195,8 @@ function gererPolaritePI() {
 //    (prise-industrielle uniquement)
 // ────────────────────────────────────────────────────────────────────────
 function gererTypeProduit() {
-    var produitEl   = document.querySelector('input[name="produit"]:checked');
-    var produit     = produitEl ? produitEl.value : '';
+    var produitEl = document.querySelector('input[name="produit"]:checked');
+    var produit = produitEl ? produitEl.value : '';
     var zoneMontage = document.getElementById('zone-montage');
     if (!zoneMontage) return;
 
@@ -205,7 +205,7 @@ function gererTypeProduit() {
         zoneMontage.classList.remove('hidden');
     } else {
         zoneMontage.classList.add('hidden');
-        document.querySelectorAll('input[name="montage_type"]').forEach(function(r) {
+        document.querySelectorAll('input[name="montage_type"]').forEach(function (r) {
             r.checked = false;
         });
     }
@@ -223,7 +223,8 @@ function mettreAJour() {
     // Compteur de caractères pour le champ Observations
     var observations = _valeur('observations');
     var nbCar = document.getElementById('nb-caracteres');
-    if (nbCar) nbCar.textContent = observations.length;
+    // Après — on n'affiche le chiffre que s'il y a vraiment du texte
+    if (nbCar) nbCar.textContent = observations.length > 0 ? observations.length : '';
 
     // Déléguer à la fonction correspondant au type de page
     if (config.type === 'prise') {
@@ -239,23 +240,23 @@ function _mettreAJourCoffret(config) {
     // Champs de contact — les noms varient selon le coffret :
     //   industrie/chantier  → societe, contact
     //   étage/événementiel  → distributeur, contact_distributeur
-    var identite     = _valeur('societe')             || _valeur('distributeur');
-    var contact      = _valeur('contact')             || _valeur('contact_distributeur');
+    var identite = _valeur('societe') || _valeur('distributeur');
+    var contact = _valeur('contact') || _valeur('contact_distributeur');
     var installateur = _valeur('installateur');
-    var contactInst  = _valeur('contact_installateur');
-    var affaire      = _valeur('affaire');
-    var telephone    = _valeur('telephone');
-    var email        = _valeur('email');
+    var contactInst = _valeur('contact_installateur');
+    var affaire = _valeur('affaire');
+    var telephone = _valeur('telephone');
+    var email = _valeur('email');
 
     // Caractéristiques techniques
-    var montage  = _selectionne('montage');
+    var montage = _selectionne('montage');
     var materiau = _selectionne('materiau');
-    var ip       = _selectionne('ip');
+    var ip = _selectionne('ip');
 
     // Protections, prises et alimentations
-    var protTete     = _multiselectionne('prot_tete[]');
-    var protPrises   = _multiselectionne('prot_prises[]');
-    var prises       = lirePrises();
+    var protTete = _multiselectionne('prot_tete[]');
+    var protPrises = _multiselectionne('prot_prises[]');
+    var prises = lirePrises();
     var alimentations = lireAlimentations();
 
     // Progression : 5 champs principaux
@@ -265,68 +266,73 @@ function _mettreAJourCoffret(config) {
     var zone = document.getElementById('resume-zone');
     if (!zone) return;
 
-    if (remplis === 0 && prises.length === 0 && alimentations.length === 0 && protTete.length === 0) {
-        zone.innerHTML = '<p class="text-bals-blue font-bold text-sm opacity-40">Configurez votre coffret</p>'
-                       + '<p class="text-gray-400 text-xs mt-1">Les informations apparaîtront ici</p>';
-        _afficherBoutons(false);
-        return;
-    }
+  if (remplis === 0 && prises.length === 0 && alimentations.length === 0 && protTete.length === 0) {
+    // On conserve le nom du coffret en bandeau, même quand tout est vide
+    zone.innerHTML = '<div class="w-full text-left space-y-3">'
+                   + '<div class="bg-bals-blue text-white rounded-lg px-3 py-2 text-sm font-bold text-center">'
+                   + config.nom
+                   + '</div>'
+                   + '<p class="text-gray-400 text-xs mt-2 text-center">Les informations apparaîtront ici</p>'
+                   + '</div>';
+    _afficherBoutons(false);
+    return;
+}
 
     var html = '<div class="w-full text-left space-y-3">';
     html += '<div class="bg-bals-blue text-white rounded-lg px-3 py-2 text-sm font-bold text-center">'
-          + config.nom + '</div>';
+        + config.nom + '</div>';
 
     // Labels adaptés selon les champs présents dans la page
     var labelIdentite = document.getElementById('societe') ? 'Société' : 'Distributeur';
-    var labelContact  = document.getElementById('contact') ? 'Contact' : 'Contact distrib.';
+    var labelContact = document.getElementById('contact') ? 'Contact' : 'Contact distrib.';
 
-    if (identite)     html += _ligne(labelIdentite, identite);
-    if (contact)      html += _ligne(labelContact, contact);
+    if (identite) html += _ligne(labelIdentite, identite);
+    if (contact) html += _ligne(labelContact, contact);
     if (installateur) html += _ligne('Installateur', installateur);
-    if (contactInst)  html += _ligne('Contact install.', contactInst);
-    if (affaire)      html += _ligne('Affaire', affaire);
-    if (telephone)    html += _ligne('Tél.', telephone);
-    if (email)        html += _ligne('Email', email);
+    if (contactInst) html += _ligne('Contact install.', contactInst);
+    if (affaire) html += _ligne('Affaire', affaire);
+    if (telephone) html += _ligne('Tél.', telephone);
+    if (email) html += _ligne('Email', email);
 
     if (montage || materiau || ip) {
         html += '<div class="border-t border-gray-100 pt-2 space-y-1">';
-        if (montage)  html += _ligne('Montage', montage);
+        if (montage) html += _ligne('Montage', montage);
         if (materiau) html += _ligne('Matériau', materiau);
-        if (ip)       html += _ligneIP(ip);
+        if (ip) html += _ligneIP(ip);
         html += '</div>';
     }
 
     if (prises.length > 0) {
-        var listePrises = prises.map(function(p) {
+        var listePrises = prises.map(function (p) {
             return p.quantite + 'x ' + p.type
-                 + (p.brochage && p.brochage !== '—' ? ' ' + p.brochage : '')
-                 + (p.tension ? ' ' + p.tension : '');
+                + (p.brochage && p.brochage !== '—' ? ' ' + p.brochage : '')
+                + (p.tension ? ' ' + p.tension : '');
         }).join('<br>');
         html += '<div class="border-t border-gray-100 pt-2">'
-              + '<p class="text-xs text-gray-400 font-bold mb-1">Prises :</p>'
-              + '<p class="text-xs font-bold text-gray-700">' + listePrises + '</p></div>';
+            + '<p class="text-xs text-gray-400 font-bold mb-1">Prises :</p>'
+            + '<p class="text-xs font-bold text-gray-700">' + listePrises + '</p></div>';
     }
 
     if (alimentations.length > 0) {
-        var listeAlim = alimentations.map(function(a) {
+        var listeAlim = alimentations.map(function (a) {
             return a.quantite + 'x ' + a.type + ' ' + a.brochage
-                 + (a.tension ? ' ' + a.tension : '');
+                + (a.tension ? ' ' + a.tension : '');
         }).join('<br>');
         html += '<div class="border-t border-gray-100 pt-2">'
-              + '<p class="text-xs text-gray-400 font-bold mb-1">Alimentation :</p>'
-              + '<p class="text-xs font-bold text-gray-700">' + listeAlim + '</p></div>';
+            + '<p class="text-xs text-gray-400 font-bold mb-1">Alimentation :</p>'
+            + '<p class="text-xs font-bold text-gray-700">' + listeAlim + '</p></div>';
     }
 
     if (protTete.length > 0) {
         html += '<div class="border-t border-gray-100 pt-2">'
-              + '<p class="text-xs text-gray-400 font-bold mb-1">Prot. de tête :</p>'
-              + '<p class="text-xs font-bold text-gray-700">' + protTete.join(', ') + '</p></div>';
+            + '<p class="text-xs text-gray-400 font-bold mb-1">Prot. de tête :</p>'
+            + '<p class="text-xs font-bold text-gray-700">' + protTete.join(', ') + '</p></div>';
     }
 
     if (protPrises.length > 0) {
         html += '<div class="border-t border-gray-100 pt-2">'
-              + '<p class="text-xs text-gray-400 font-bold mb-1">Prot. des prises :</p>'
-              + '<p class="text-xs font-bold text-gray-700">' + protPrises.join(', ') + '</p></div>';
+            + '<p class="text-xs text-gray-400 font-bold mb-1">Prot. des prises :</p>'
+            + '<p class="text-xs font-bold text-gray-700">' + protPrises.join(', ') + '</p></div>';
     }
 
     html += '</div>';
@@ -336,19 +342,19 @@ function _mettreAJourCoffret(config) {
 
 // ── Résumé pour la prise industrielle ───────────────────────────────────
 function _mettreAJourPrise(config) {
-    var societe      = _valeur('societe');
-    var contact      = _valeur('contact');
+    var societe = _valeur('societe');
+    var contact = _valeur('contact');
     var installateur = _valeur('installateur');
-    var affaire      = _valeur('affaire');
-    var email        = _valeur('email');
-    var quantite     = _valeur('quantite') || '1';
+    var affaire = _valeur('affaire');
+    var email = _valeur('email');
+    var quantite = _valeur('quantite') || '1';
 
     var produit = _selectionne('produit');
     var montage = _selectionne('montage_type');
     var tension = _selectionne('tension');
-    var amp     = _selectionne('amp');
-    var pol     = _selectionne('pol');
-    var ip      = _selectionne('ip');
+    var amp = _selectionne('amp');
+    var pol = _selectionne('pol');
+    var ip = _selectionne('ip');
 
     // Progression : 7 champs principaux
     var remplis = _compterRemplis([societe, email, produit, tension, amp, pol, ip]);
@@ -359,20 +365,20 @@ function _mettreAJourPrise(config) {
 
     if (remplis === 0) {
         zone.innerHTML = '<p class="text-bals-blue font-bold text-sm opacity-40">Configurez votre prise</p>'
-                       + '<p class="text-gray-400 text-xs mt-1">Les informations apparaîtront ici</p>';
+            + '<p class="text-gray-400 text-xs mt-1">Les informations apparaîtront ici</p>';
         _afficherBoutons(false);
         return;
     }
 
     var html = '<div class="w-full text-left space-y-3">';
     html += '<div class="bg-bals-blue text-white rounded-lg px-3 py-2 text-sm font-bold text-center">'
-          + config.nom + '</div>';
+        + config.nom + '</div>';
 
-    if (societe)      html += _ligne('Société', societe);
-    if (contact)      html += _ligne('Contact', contact);
+    if (societe) html += _ligne('Société', societe);
+    if (contact) html += _ligne('Contact', contact);
     if (installateur) html += _ligne('Installateur', installateur);
-    if (affaire)      html += _ligne('Affaire', affaire);
-    if (email)        html += _ligne('Email', email);
+    if (affaire) html += _ligne('Affaire', affaire);
+    if (email) html += _ligne('Email', email);
 
     if (produit || montage) {
         html += '<div class="border-t border-gray-100 pt-2 space-y-1">';
@@ -384,15 +390,15 @@ function _mettreAJourPrise(config) {
     if (tension || amp || pol || ip) {
         html += '<div class="border-t border-gray-100 pt-2 space-y-1">';
         if (tension) html += _ligne('Tension', tension);
-        if (amp)     html += _ligne('Intensité', amp);
-        if (pol)     html += _ligne('Polarité', pol);
-        if (ip)      html += _ligneIP(ip);
+        if (amp) html += _ligne('Intensité', amp);
+        if (pol) html += _ligne('Polarité', pol);
+        if (ip) html += _ligneIP(ip);
         html += '</div>';
     }
 
     html += '<div class="border-t border-gray-100 pt-2">'
-          + '<p class="text-xs"><span class="text-gray-400">Quantité :</span> '
-          + '<span class="font-black text-bals-blue">' + quantite + '</span></p></div>';
+        + '<p class="text-xs"><span class="text-gray-400">Quantité :</span> '
+        + '<span class="font-black text-bals-blue">' + quantite + '</span></p></div>';
 
     html += '</div>';
     zone.innerHTML = html;
@@ -404,13 +410,13 @@ function _mettreAJourPrise(config) {
 // 6. COPIER LE RÉSUMÉ dans le presse-papiers
 // ────────────────────────────────────────────────────────────────────────
 function copierResume() {
-    var config  = window.COFFRET || { nom: 'BALS' };
+    var config = window.COFFRET || { nom: 'BALS' };
     var societe = _valeur('societe') || _valeur('distributeur') || 'N/A';
-    var email   = _valeur('email') || 'N/A';
-    var texte   = 'DEVIS BALS — ' + config.nom.toUpperCase()
-                + '\nSociété : '   + societe
-                + '\nEmail : '     + email;
-    navigator.clipboard.writeText(texte).then(function() {
+    var email = _valeur('email') || 'N/A';
+    var texte = 'DEVIS BALS — ' + config.nom.toUpperCase()
+        + '\nSociété : ' + societe
+        + '\nEmail : ' + email;
+    navigator.clipboard.writeText(texte).then(function () {
         alert('Résumé copié dans le presse-papiers !');
     });
 }
@@ -421,7 +427,7 @@ function copierResume() {
 // ────────────────────────────────────────────────────────────────────────
 function reinitialiser() {
     // Vider les champs texte, email et téléphone
-    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(function(el) {
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(function (el) {
         el.value = '';
     });
 
@@ -430,27 +436,27 @@ function reinitialiser() {
     if (quantite) quantite.value = '1';
 
     // Décocher tous les radios et checkboxes
-    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(function(r) {
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(function (r) {
         r.checked = false;
     });
 
     // Remettre les compteurs de prises à 0 (coffrets)
-    document.querySelectorAll('span[data-type]').forEach(function(span) {
+    document.querySelectorAll('span[data-type]').forEach(function (span) {
         span.textContent = '0';
     });
 
     // Remettre les compteurs d'alimentation à 0
-    document.querySelectorAll('span[data-alim]').forEach(function(span) {
+    document.querySelectorAll('span[data-alim]').forEach(function (span) {
         span.textContent = '0';
     });
 
     // Réinitialiser les selects de tension (coffrets)
-    document.querySelectorAll('select[data-field="tension"]').forEach(function(sel) {
+    document.querySelectorAll('select[data-field="tension"]').forEach(function (sel) {
         sel.value = '';
     });
 
     // Réinitialiser les selects de tension-alim
-    document.querySelectorAll('select[data-field="tension-alim"]').forEach(function(sel) {
+    document.querySelectorAll('select[data-field="tension-alim"]').forEach(function (sel) {
         sel.value = '';
     });
 
@@ -460,7 +466,7 @@ function reinitialiser() {
 
     // Remettre le compteur de caractères à 0
     var nbCar = document.getElementById('nb-caracteres');
-    if (nbCar) nbCar.textContent = '0';
+    if (nbCar) nbCar.textContent = '';
 
     mettreAJour();
 }
@@ -470,14 +476,14 @@ function reinitialiser() {
 // 8. ENVOYER LE DEVIS — POST vers /api/devis + ouverture du client mail
 // ────────────────────────────────────────────────────────────────────────
 function envoyerDevis() {
-    var config       = window.COFFRET || { nom: 'BALS', type: 'coffret' };
-    var societe      = _valeur('societe')             || _valeur('distributeur');
-    var contact      = _valeur('contact')             || _valeur('contact_distributeur');
+    var config = window.COFFRET || { nom: 'BALS', type: 'coffret' };
+    var societe = _valeur('societe') || _valeur('distributeur');
+    var contact = _valeur('contact') || _valeur('contact_distributeur');
     var installateur = _valeur('installateur');
-    var contactInst  = _valeur('contact_installateur');
-    var affaire      = _valeur('affaire');
-    var telephone    = _valeur('telephone');
-    var email        = _valeur('email');
+    var contactInst = _valeur('contact_installateur');
+    var affaire = _valeur('affaire');
+    var telephone = _valeur('telephone');
+    var email = _valeur('email');
     var observations = _valeur('observations');
 
     var payload;
@@ -485,57 +491,57 @@ function envoyerDevis() {
     if (config.type === 'prise') {
         payload = {
             type_coffret: config.nom,
-            societe:      societe,
-            contact:      contact,
+            societe: societe,
+            contact: contact,
             installateur: installateur,
-            affaire:      affaire,
-            email:        email,
+            affaire: affaire,
+            email: email,
             observations: observations,
             donnees: {
-                produit:  _selectionne('produit'),
-                montage:  _selectionne('montage_type'),
-                tension:  _selectionne('tension'),
-                amp:      _selectionne('amp'),
-                pol:      _selectionne('pol'),
-                ip:       _selectionne('ip'),
+                produit: _selectionne('produit'),
+                montage: _selectionne('montage_type'),
+                tension: _selectionne('tension'),
+                amp: _selectionne('amp'),
+                pol: _selectionne('pol'),
+                ip: _selectionne('ip'),
                 quantite: _valeur('quantite') || '1'
             }
         };
     } else {
         payload = {
-            type_coffret:         config.nom,
-            societe:              societe,
-            contact:              contact,
-            installateur:         installateur,
+            type_coffret: config.nom,
+            societe: societe,
+            contact: contact,
+            installateur: installateur,
             contact_installateur: contactInst,
-            affaire:              affaire,
-            telephone:            telephone,
-            email:                email,
-            observations:         observations,
+            affaire: affaire,
+            telephone: telephone,
+            email: email,
+            observations: observations,
             donnees: {
-                montage:            _selectionne('montage'),
-                materiau:           _selectionne('materiau'),
-                ip:                 _selectionne('ip'),
-                prises:             lirePrises(),
-                alimentations:      lireAlimentations(),
-                protections_tete:   _multiselectionne('prot_tete[]'),
+                montage: _selectionne('montage'),
+                materiau: _selectionne('materiau'),
+                ip: _selectionne('ip'),
+                prises: lirePrises(),
+                alimentations: lireAlimentations(),
+                protections_tete: _multiselectionne('prot_tete[]'),
                 protections_prises: _multiselectionne('prot_prises[]')
             }
         };
     }
 
-    var sujet    = encodeURIComponent('Demande de devis ' + config.nom + (societe ? ' — ' + societe : ''));
-    var corps    = encodeURIComponent('Bonjour,\n\nVeuillez trouver ci-joint ma demande de devis.\n\nSociété : ' + societe);
+    var sujet = encodeURIComponent('Demande de devis ' + config.nom + (societe ? ' — ' + societe : ''));
+    var corps = encodeURIComponent('Bonjour,\n\nVeuillez trouver ci-joint ma demande de devis.\n\nSociété : ' + societe);
     var lienMail = 'mailto:info@bals-france.fr?subject=' + sujet + '&body=' + corps;
-    var token    = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+    var token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
 
     fetch('/api/devis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
         body: JSON.stringify(payload)
     })
-    .then(function()  { window.location.href = lienMail; })
-    .catch(function() { window.location.href = lienMail; });
+        .then(function () { window.location.href = lienMail; })
+        .catch(function () { window.location.href = lienMail; });
 }
 
 
@@ -558,19 +564,19 @@ function _selectionne(name) {
 function _multiselectionne(name) {
     return Array.from(
         document.querySelectorAll('input[name="' + name + '"]:checked')
-    ).map(function(el) { return el.value; });
+    ).map(function (el) { return el.value; });
 }
 
 // Compter le nombre de valeurs non-vides dans un tableau
 function _compterRemplis(tableau) {
-    return tableau.reduce(function(total, valeur) {
+    return tableau.reduce(function (total, valeur) {
         return total + (valeur ? 1 : 0);
     }, 0);
 }
 
 // Mettre à jour la barre de progression
 function _mettreAJourBarre(remplis, total) {
-    var pct   = Math.round(remplis / total * 100);
+    var pct = Math.round(remplis / total * 100);
     var barre = document.getElementById('progression-barre');
     var texte = document.getElementById('progression-texte');
     if (barre) barre.style.width = pct + '%';
@@ -591,17 +597,17 @@ function _afficherBoutons(visible) {
 // Générer une ligne label : valeur dans le résumé
 function _ligne(label, valeur) {
     return '<p class="text-xs">'
-         + '<span class="text-gray-400">' + label + ' :</span> '
-         + '<span class="font-bold text-gray-700">' + valeur + '</span>'
-         + '</p>';
+        + '<span class="text-gray-400">' + label + ' :</span> '
+        + '<span class="font-bold text-gray-700">' + valeur + '</span>'
+        + '</p>';
 }
 
 // Générer la ligne IP avec la couleur bleue BALS
 function _ligneIP(valeur) {
     return '<p class="text-xs">'
-         + '<span class="text-gray-400">IP :</span> '
-         + '<span class="font-black text-bals-blue">' + valeur + '</span>'
-         + '</p>';
+        + '<span class="text-gray-400">IP :</span> '
+        + '<span class="font-black text-bals-blue">' + valeur + '</span>'
+        + '</p>';
 }
 
 // Tableau qui garde en mémoire les fichiers sélectionnés
@@ -687,6 +693,6 @@ function iconeType(mime) {
 // ────────────────────────────────────────────────────────────────────────
 // INITIALISATION — exécuté une fois que la page est complètement chargée
 // ────────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     mettreAJour();
 });
