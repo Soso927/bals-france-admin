@@ -276,15 +276,15 @@
                                                                 value="230V">
                                                         </div>
                                                     @else
-                                                        <select
-                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                                            data-alim="{{ $alim }}"
-                                                            data-brochage="{{ $brochage }}"
-                                                            data-field="tension-alim"
-                                                            onchange="mettreAJour()">
-                                                            <option value="">--</option>
-                                                            <option value="400V">400V</option>
-                                                        </select>
+                                                        {{-- 3P+T / 3P+N+T = triphasé : toujours 400V --}}
+                                                        <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                                            <span class="font-semibold">400V</span>
+                                                            <input type="hidden"
+                                                                data-alim="{{ $alim }}"
+                                                                data-brochage="{{ $brochage }}"
+                                                                data-field="tension-alim"
+                                                                value="400V">
+                                                        </div>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -307,7 +307,7 @@
                 <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
                      onclick="toggleSection('s3')">
                     <div class="flex items-center gap-3">
-                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">03</span>
+                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">04</span>
                         <span class="font-bold text-lg">Caractéristiques Techniques des prises</span>
                     </div>
                     <span id="arrow-s3" class="text-white text-lg transition-transform duration-300">▼</span>
@@ -395,11 +395,15 @@
                                                     value="230V">
                                             </div>
                                         @else
-                                            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                                data-type="{{ $cei }}" data-brochage="{{ $brochage }}" data-field="tension" onchange="mettreAJour()">
-                                                <option value="">--</option>
-                                                <option value="400V">400V</option>
-                                            </select>
+                                            {{-- 3P+T / 3P+N+T = triphasé : toujours 400V --}}
+                                            <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                                <span class="font-semibold">400V</span>
+                                                <input type="hidden"
+                                                    data-type="{{ $cei }}"
+                                                    data-brochage="{{ $brochage }}"
+                                                    data-field="tension"
+                                                    value="400V">
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
@@ -455,14 +459,14 @@
             </div>
 
             {{-- ====================================================== --}}
-            {{-- SECTION 04 : PROTECTION DE TÊTE                        --}}
+            {{-- SECTION 05 : PROTECTION DE TÊTE                        --}}
             {{-- ====================================================== --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
                 <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
                      onclick="toggleSection('s4')">
                     <div class="flex items-center gap-3">
-                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">04</span>
+                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">05</span>
                         <span class="font-bold text-lg">Protection de Tête</span>
                     </div>
                     <span id="arrow-s4" class="text-white text-lg transition-transform duration-300">▼</span>
@@ -529,14 +533,14 @@
             </div>
 
             {{-- ====================================================== --}}
-            {{-- SECTION 05 : PROTECTION DES PRISES                     --}}
+            {{-- SECTION 06 : PROTECTION DES PRISES                     --}}
             {{-- ====================================================== --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
                 <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
                      onclick="toggleSection('s5')">
                     <div class="flex items-center gap-3">
-                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">05</span>
+                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">06</span>
                         <span class="font-bold text-lg">Protection des Prises</span>
                     </div>
                     <span id="arrow-s5" class="text-white text-lg transition-transform duration-300">▼</span>
@@ -595,14 +599,14 @@
             </div>
 
             {{-- ====================================================== --}}
-            {{-- SECTION 06 : OBSERVATIONS                              --}}
+            {{-- SECTION 07 : OBSERVATIONS                              --}}
             {{-- ====================================================== --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 
                 <div class="bg-bals-blue text-white px-6 py-4 flex items-center justify-between cursor-pointer"
                      onclick="toggleSection('s6')">
                     <div class="flex items-center gap-3">
-                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">06</span>
+                        <span class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">07</span>
                         <span class="font-bold text-lg">Observations</span>
                     </div>
                     <span id="arrow-s6" class="text-white text-lg transition-transform duration-300">▼</span>
@@ -638,7 +642,7 @@
                         onclick="toggleSection('s7')">
                         <div class="flex items-center gap-3">
                             <span
-                                class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">07</span>
+                                class="bg-white text-bals-blue font-black text-sm w-8 h-8 rounded-lg flex items-center justify-center">08</span>
                             <span class="font-bold text-lg">Pièces Jointes</span>
                         </div>
                         <span id="arrow-s7" class="text-white text-lg transition-transform duration-300">▼</span>

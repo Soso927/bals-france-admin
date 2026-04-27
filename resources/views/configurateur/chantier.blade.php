@@ -257,15 +257,15 @@
                                                                 value="230V">
                                                         </div>
                                                     @else
-                                                        <select
-                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                                            data-alim="{{ $alim }}"
-                                                            data-brochage="{{ $brochage }}"
-                                                            data-field="tension-alim"
-                                                            onchange="mettreAJour()">
-                                                            <option value="">--</option>
-                                                            <option value="400V">400V</option>
-                                                        </select>
+                                                        {{-- 3P+T / 3P+N+T = triphasé : toujours 400V --}}
+                                                        <div class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                                            <span class="font-semibold">400V</span>
+                                                            <input type="hidden"
+                                                                data-alim="{{ $alim }}"
+                                                                data-brochage="{{ $brochage }}"
+                                                                data-field="tension-alim"
+                                                                value="400V">
+                                                        </div>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -345,7 +345,7 @@
                                 </tbody>
                             </table>
                         </div>
-
+                        
                         {{-- ── CARTES CEI (16A, 32A, 63A, 125A) générées par @foreach ── --}}
                         @foreach (['Prises  CEI 16A', 'Prises  CEI 32A', 'Prises  CEI 63A', 'Prises  CEI 125A'] as $cei)
                             <div class="rounded-xl border border-gray-200 overflow-hidden">
@@ -404,14 +404,14 @@
                                                                 value="230V">
                                                         </div>
                                                     @else
-                                                        <select
-                                                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-bals-blue"
-                                                            data-type="{{ $cei }}"
-                                                            data-brochage="{{ $brochage }}" data-field="tension"
-                                                            onchange="mettreAJour()">
-                                                            <option value="">--</option>
-                                                            <option value="400V">400V</option>
-                                                        </select>
+                                                        <div class="w-full border-gray-300 rounded-lg px-3 py-2 text-xs text-gray-700 bg-gray-50 text-center">
+                                                            <span class="font-semibold">400V </span>
+                                                                <input type="hidden"
+                                                                data-type="{{ $cei }}"
+                                                                data-brochage="{{ $brochage }}"
+                                                                data-field="tension"
+                                                                value="400V">
+                                                        </div>
                                                     @endif
                                                 </td>
                                             </tr>

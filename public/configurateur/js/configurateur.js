@@ -61,24 +61,19 @@ function changerQte(btnOuDelta, direction) {
 //     les prises 3P+T et 3P+N+T passent automatiquement en 400V
 // ────────────────────────────────────────────────────────────────────────
 function gererInteractiviteTension() {
-    var section = document.getElementById('section-s3');
-    if (!section) return;
-
-    // Vérifier si au moins une prise 2P+T a une quantité > 0
-    var spans2PT = section.querySelectorAll('span[data-brochage="2P+T"]');
+    // Vérifier si au moins un span 2P+T (prises OU alimentation) a une quantité > 0
     var has2PT = false;
-    spans2PT.forEach(function (span) {
+    document.querySelectorAll('span[data-brochage="2P+T"]').forEach(function (span) {
         if (parseInt(span.textContent) > 0) has2PT = true;
     });
 
     if (has2PT) {
-        // Auto-sélectionner 400V sur tous les <select> 3P+T et 3P+N+T
-        // (les champs vides seulement, pour ne pas écraser un choix déjà fait)
-        var selects = section.querySelectorAll(
-            'select[data-field="tension"][data-brochage="3P+T"],' +
-            'select[data-field="tension"][data-brochage="3P+N+T"]'
-        );
-        selects.forEach(function (select) {
+        // Auto-sélectionner 400V sur tous les <select> 3P+T et 3P+N+T vides
+        // — couvre data-field="tension" (prises) ET data-field="tension-alim" (alimentation)
+        document.querySelectorAll(
+            'select[data-brochage="3P+T"],' +
+            'select[data-brochage="3P+N+T"]'
+        ).forEach(function (select) {
             if (select.value === '') select.value = '400V';
         });
     }
