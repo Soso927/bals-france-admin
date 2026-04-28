@@ -76,7 +76,26 @@ Route::middleware(['auth', 'admin'])
                 'lus'      => \App\Models\Devis::where('statut', 'lu')->count(),
                 'traites'  => \App\Models\Devis::where('statut', 'traité')->count(),
             ];
-            return view('admin.devis', compact('stats'));
+
+            // Nouvelles données : devis des 7 derniers jours, groupés par jour ET par statut
+            // On obtient une collection de lignes : [date,statut,count]
+            $devisParJour = \App\Models\Devis::selectRaw("
+                DATE(created_at) as jour,
+                statut,
+                COUNT(*) as total
+            ")
+            ->where('created_at', '>=', now()->subDays(6)->startOfDay())
+            ->groupBy('jour', 'statut')
+            ->orderBy('jour')
+            ->get();
+
+            $chartData = $devisParJour->map(fn($row) => [
+                $row->jour,
+                $row->statut,
+                $row->total,
+            ])->toArray();
+
+            return view('admin.devis', compact('stats', 'chartData'));
         })->name('devis');
 
     });

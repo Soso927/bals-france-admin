@@ -7,6 +7,11 @@
 	La balise meta csrf-token est essentielle pour la sécurité. Elle permet à Livewire (et à Javascript) d'inclure automatiquement le token de protection CSRF dans toutes ses requêtes vers le serveur. Sans elle, Laravel refuserait toutes les requêtes de modification avec une erreur 419 "Page Expired".
 	}} --}}
 	 <meta name="csrf-token" content="{{ csrf_token() }}">
+	 {{-- ECharts via CDN (version 5, stable) --}}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+{{-- Ce stack permet à chaque page d'injecter ses propres scripts --}}
+@stack('scripts')
 	<title>@yield('title', $title ?? 'Administration')</title>
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
 	{{--

@@ -43,9 +43,19 @@
     </div>
 
     {{-- ══════════════════════════════════════════════════
+         Graphique ECharts — Demandes des 7 derniers jours
+    ══════════════════════════════════════════════════ --}}
+    <div id="chart-devis" style="width: 100%; height: 400px;" class="mt-8 rounded-2xl bg-white border border-gray-100 shadow-sm p-4"></div>
+
+    {{-- ══════════════════════════════════════════════════
          Composant Livewire — Gestion des devis
     ══════════════════════════════════════════════════ --}}
     <livewire:admin.devis-manager />
+
+@push('scripts')
+<script>window.devisChartData = @json($chartData);</script>
+<script src="{{ asset('js/admin/devis.js') }}"></script>
+@endpush
 
 </div>
 @endsection
