@@ -89,6 +89,13 @@
                                                 class="rounded-2xl border border-stone-300 px-3 py-1.5 text-xs font-medium hover:bg-stone-50 transition-colors">
                                             Voir
                                         </button>
+                                        @if ($d->reference)
+                                        <a href="{{ route('admin.devis.pdf', $d) }}"
+                                           target="_blank"
+                                           class="rounded-2xl border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 transition-colors">
+                                            PDF
+                                        </a>
+                                        @endif
                                         <button wire:click="supprimer({{ $d->id }})"
                                                 wire:confirm="Supprimer ce devis ?"
                                                 type="button"
@@ -128,12 +135,28 @@
             <div class="flex items-start justify-between gap-4 mb-5">
                 <div>
                     <h2 class="text-lg font-semibold text-stone-900">Devis #{{ $devisDetail->id }}</h2>
+                    @if ($devisDetail->reference)
+                        <p class="text-xs font-mono text-stone-500 mt-0.5">{{ $devisDetail->reference }}</p>
+                    @endif
                     <p class="text-xs text-stone-400 mt-0.5">{{ $devisDetail->created_at->format('d/m/Y à H:i') }}</p>
                 </div>
-                <button wire:click="fermerDetail" type="button"
-                        class="flex-shrink-0 rounded-2xl border border-stone-300 px-3 py-1.5 text-sm hover:bg-stone-50 transition-colors">
-                    Fermer
-                </button>
+                <div class="flex gap-2">
+                    @if ($devisDetail->reference)
+                    <a href="{{ route('admin.devis.pdf', $devisDetail) }}"
+                       target="_blank"
+                       class="flex-shrink-0 inline-flex items-center gap-1 rounded-2xl bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        PDF
+                    </a>
+                    @endif
+                    <button wire:click="fermerDetail" type="button"
+                            class="flex-shrink-0 rounded-2xl border border-stone-300 px-3 py-1.5 text-sm hover:bg-stone-50 transition-colors">
+                        Fermer
+                    </button>
+                </div>
             </div>
 
             {{-- Type coffret --}}

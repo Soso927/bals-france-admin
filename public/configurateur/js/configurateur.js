@@ -541,6 +541,114 @@ function envoyerDevis() {
 
 
 // ────────────────────────────────────────────────────────────────────────
+// 9. SOUMETTRE + TÉLÉCHARGER LE PDF — POST vers /configurateur/soumettre
+//    Réutilise la même collecte de données que envoyerDevis().
+//    Appelé par le bouton "Générer mon devis PDF" dans le panneau résumé.
+// ────────────────────────────────────────────────────────────────────────
+async function soumettrePDF() {
+    var config = window.COFFRET || { nom: 'BALS', type: 'coffret' };
+    var bouton = document.getElementById('btn-soumettre-pdf');
+    var texteOriginal = bouton ? bouton.innerHTML : '';
+
+    if (bouton) {
+        bouton.disabled = true;
+        bouton.innerHTML = '⏳ Génération en cours…';
+    }
+
+    try {
+        // Réutilise la même structure de payload que envoyerDevis()
+        var societe = _valeur('societe') || _valeur('distributeur');
+        var payload;
+
+        if (config.type === 'prise') {
+            payload = {
+                type_coffret: config.nom,
+                distributeur: societe,
+                contact:      _valeur('contact') || _valeur('contact_distributeur'),
+                installateur: _valeur('installateur'),
+                affaire:      _valeur('affaire'),
+                email:        _valeur('email'),
+                observations: _valeur('observations'),
+                donnees: {
+                    produit:  _selectionne('produit'),
+                    montage:  _selectionne('montage_type'),
+                    tension:  _selectionne('tension'),
+                    amp:      _selectionne('amp'),
+                    pol:      _selectionne('pol'),
+                    ip:       _selectionne('ip'),
+                    quantite: _valeur('quantite') || '1'
+                }
+            };
+        } else {
+            payload = {
+                type_coffret:          config.nom,
+                distributeur:          societe,
+                contact:               _valeur('contact') || _valeur('contact_distributeur'),
+                installateur:          _valeur('installateur'),
+                contact_installateur:  _valeur('contact_installateur'),
+                affaire:               _valeur('affaire'),
+                telephone:             _valeur('telephone'),
+                email:                 _valeur('email'),
+                observations:          _valeur('observations'),
+                donnees: {
+                    montage:            _selectionne('montage'),
+                    materiau:           _selectionne('materiau'),
+                    ip:                 _selectionne('ip'),
+                    prises:             lirePrises(),
+                    alimentations:      lireAlimentations(),
+                    protections_tete:   _multiselectionne('prot_tete[]'),
+                    protections_prises: _multiselectionne('prot_prises[]')
+                }
+            };
+        }
+
+        var token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+
+        var response = await fetch('/configurateur/soumettre', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept':       'application/pdf',
+                'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erreur serveur : ' + response.status);
+        }
+
+        // Déclenche le téléchargement du PDF reçu en réponse
+        var blob    = await response.blob();
+        var url     = URL.createObjectURL(blob);
+        var lien    = document.createElement('a');
+        lien.href   = url;
+        lien.download = 'Devis-BALS-' + config.nom.replace(/\s+/g, '-') + '.pdf';
+        document.body.appendChild(lien);
+        lien.click();
+        document.body.removeChild(lien);
+        URL.revokeObjectURL(url);
+
+        if (bouton) {
+            bouton.innerHTML = '✅ Devis généré !';
+            setTimeout(function () {
+                bouton.innerHTML = texteOriginal;
+                bouton.disabled = false;
+            }, 3000);
+        }
+
+    } catch (err) {
+        console.error('Erreur soumettrePDF :', err);
+        alert('Une erreur est survenue lors de la génération du PDF. Réessayez.');
+        if (bouton) {
+            bouton.innerHTML = texteOriginal;
+            bouton.disabled = false;
+        }
+    }
+}
+
+
+// ────────────────────────────────────────────────────────────────────────
 // FONCTIONS UTILITAIRES (usage interne, préfixées _ par convention)
 // ────────────────────────────────────────────────────────────────────────
 

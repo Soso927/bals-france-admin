@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DevisController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -35,6 +36,9 @@ Route::prefix('configurateur')->name('configurateur.')->group(function () {
     Route::get('prise-industrielle', fn() => view('configurateur.prise-industrielle'))->name('prise-industrielle');
     Route::get('etage',              fn() => view('configurateur.etage'))->name('etage');
     Route::get('evenementiel',       fn() => view('configurateur.evenementiel'))->name('evenementiel');
+
+    // Soumission du devis avec génération PDF immédiate
+    Route::post('soumettre', [DevisController::class, 'store'])->name('soumettre');
 });
 
 // ══════════════════════════════════════════════════════════
@@ -68,6 +72,9 @@ Route::middleware(['auth', 'admin'])
             ];
             return view('admin.dashboard', compact('stats'));
         })->name('dashboard');
+
+        // Export PDF d'un devis existant
+        Route::get('devis/{devis}/pdf', [DevisController::class, 'exportPdf'])->name('devis.pdf');
 
         // Demandes de devis
         Route::get('devis', function () {
