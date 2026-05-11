@@ -40,6 +40,56 @@
     "order": 0
   },
   {
+    "region_nom": "Auvergne-Rhône-Alpes",
+    "agence": "AGENCE MONIER",
+    "nom": "Ghislain MONIER",
+    "departement": "Dépt. 03, 15, 19, 23, 43, 63, 87",
+    "tel": "06 78 98 74 30",
+    "tel_raw": "+330678987430",
+    "email": "contact@agencemonier.com",
+    "order": 0
+  },
+  {
+    "region_nom": "Nouvelle-Aquitaine",
+    "agence": "RMEE",
+    "nom": "Christophe NIETRZEBA",
+    "departement": "Dépt. 16, 17, 24",
+    "tel": "06 80 46 93 93",
+    "tel_raw": "+330680469393",
+    "email": "c.nietrzeba@rmee.fr",
+    "order": 0
+  },
+  {
+    "region_nom": "Nouvelle-Aquitaine",
+    "agence": "RMEE",
+    "nom": "Jean-Christophe SEBILE",
+    "departement": "Dépt. 33, 40, 47, 64",
+    "tel": "06 86 16 63 64",
+    "tel_raw": "+330686166364",
+    "email": "jc.sebile@rmee.fr",
+    "order": 10
+  },
+  {
+    "region_nom": "Occitanie",
+    "agence": "REPELEC",
+    "nom": "Cédric RICAUD",
+    "departement": "Dépt. 09, 11, 32, 46, 65, 82",
+    "tel": "06 33 98 59 18",
+    "tel_raw": "+330633985918",
+    "email": "c.ricaud@repelec.fr",
+    "order": 0
+  },
+  {
+    "region_nom": "Occitanie",
+    "agence": "REPELEC",
+    "nom": "Sébastien LIENARD",
+    "departement": "Dépt. 12, 31, 48, 66, 81",
+    "tel": "06 78 22 54 30",
+    "tel_raw": "+330678225430",
+    "email": "s.lienard@repelec.fr",
+    "order": 10
+  },
+  {
     "region_nom": "Île-de-France",
     "agence": "AGENCE DUMAS",
     "nom": "Alexis ANDRADE SILVA",
@@ -117,6 +167,46 @@
     "tel": "06 12 22 34 16",
     "tel_raw": "+330612223416",
     "email": "Raphael.legrand@fanjouxdiffusion.com",
+    "order": 0
+  },
+  {
+    "region_nom": "Auvergne-Rhône-Alpes",
+    "agence": "AGENCE XPE XPRO ELEC",
+    "nom": "Lionel AUCLAIR",
+    "departement": "Dépt. 07, 26, 42",
+    "tel": "07 85 23 64 23",
+    "tel_raw": "+330785236423",
+    "email": "lauclair@xpe-france.fr",
+    "order": 10
+  },
+  {
+    "region_nom": "Auvergne-Rhône-Alpes",
+    "agence": "AGENCE XPE XPRO ELEC",
+    "nom": "Nicolas CHARPENTIER",
+    "departement": "Dépt. 01, 73, 74",
+    "tel": "06 08 62 00 39",
+    "tel_raw": "+330608620039",
+    "email": "ncharpentier@xpe-france.com",
+    "order": 20
+  },
+  {
+    "region_nom": "Auvergne-Rhône-Alpes",
+    "agence": "AGENCE XPE XPRO ELEC",
+    "nom": "Olivier REYNAUD",
+    "departement": "Dépt. 38, 69",
+    "tel": "06 80 08 25 26",
+    "tel_raw": "+330680082526",
+    "email": "commercial@xpe-france.com",
+    "order": 30
+  },
+  {
+    "region_nom": "Provence-Alpes-Côte d'Azur",
+    "agence": "AGENCE RENAUDI",
+    "nom": "Fabien RENAUDI",
+    "departement": "Dépt. 04, 05, 06, 13, 2A, 2B, 30, 34, 83, 84",
+    "tel": "06 29 44 69 94",
+    "tel_raw": "+330629446994",
+    "email": "contact@agencerenaudi.fr",
     "order": 0
   }
 ]

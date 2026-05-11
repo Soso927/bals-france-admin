@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Devis;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
+use Mpdf\Mpdf;
 
 class DevisController extends Controller
 {
-    /**
-     * Reçoit le JSON du configurateur, sauvegarde, génère le PDF et le retourne.
-     * Route publique (même protection CSRF que l'API).
-     */
     public function store(Request $request): \Illuminate\Http\Response
     {
         $validated = $request->validate([
@@ -40,9 +38,6 @@ class DevisController extends Controller
         return $this->genererEtRetourner($devis);
     }
 
-    /**
-     * Permet à l'admin de télécharger ou régénérer le PDF d'un devis existant.
-     */
     public function exportPdf(Devis $devis): \Illuminate\Http\Response
     {
         if ($devis->statut === 'nouveau') {
@@ -54,13 +49,48 @@ class DevisController extends Controller
 
     private function genererEtRetourner(Devis $devis): \Illuminate\Http\Response
     {
-        $pdf = Pdf::loadView('pdf.devis', compact('devis'))
-                  ->setPaper('A4', 'portrait');
+        $html = view('pdf.devis', compact('devis'))->render();
 
+        $mpdf = $this->creerMpdf();
+        $mpdf->SetHTMLFooter('
+            <table width="100%" style="border-top:2px solid #1a3a6b; font-size:9px; color:#94a3b8; padding-top:5px;">
+                <tr>
+                    <td style="text-align:left;"><strong style="color:#1a3a6b;">BALS</strong></td>
+                    <td style="text-align:center;">Demande de devis n° ' . $devis->reference . '</td>
+                    <td style="text-align:right;">Page {PAGENO}/{nbpg}</td>
+                </tr>
+            </table>
+        ');
+        $mpdf->WriteHTML($html);
+
+        $contenuPdf    = $mpdf->Output('', 'S');
         $cheminRelatif = "devis/{$devis->reference}.pdf";
-        Storage::disk('local')->put($cheminRelatif, $pdf->output());
+        Storage::disk('local')->put($cheminRelatif, $contenuPdf);
         $devis->update(['pdf_path' => $cheminRelatif]);
 
-        return $pdf->download("Devis-{$devis->reference}.pdf");
+        return response($contenuPdf, 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => "attachment; filename=\"Devis-{$devis->reference}.pdf\"",
+        ]);
+    }
+
+    private function creerMpdf(): Mpdf
+    {
+        $fontDirs = (new ConfigVariables())->getDefaults()['fontDir'];
+        $fontData = (new FontVariables())->getDefaults()['fontdata'];
+
+        return new Mpdf([
+            'format'            => 'A4',
+            'orientation'       => 'P',
+            'margin_top'        => 10,
+            'margin_right'      => 12,
+            'margin_bottom'     => 20,
+            'margin_left'       => 12,
+            'default_font'      => 'dejavusans',
+            'default_font_size' => 10,
+            'tempDir'           => storage_path('app/mpdf-temp'),
+            'fontDir'           => $fontDirs,
+            'fontdata'          => $fontData,
+        ]);
     }
 }

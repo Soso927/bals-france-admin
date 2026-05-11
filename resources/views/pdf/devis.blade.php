@@ -5,124 +5,139 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'DejaVu Sans', sans-serif;
-            font-size: 11px;
+            font-family: 'dejavusans', sans-serif;
+            font-size: 10px;
             color: #1e293b;
-            background: #ffffff;
         }
 
         /* ── En-tête ── */
         .entete {
-            background: #1a3a6b;
+            background-color: #1a3a6b;
             color: white;
-            padding: 20px 30px;
+            padding: 16px 20px;
+            width: 100%;
         }
-        .entete-inner { width: 100%; }
-        .entete-gauche { display: inline-block; width: 60%; vertical-align: top; }
-        .entete-droite { display: inline-block; width: 39%; vertical-align: top; text-align: right; }
-        .entete-nom    { font-size: 22px; font-weight: 900; letter-spacing: 3px; }
-        .entete-sous   { font-size: 11px; margin-top: 4px; opacity: 0.8; }
-        .reference     { font-size: 14px; font-weight: bold; margin-top: 4px; }
-        .date-gen      { font-size: 10px; opacity: 0.7; margin-top: 4px; }
-        .badge-type {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.2);
-            font-size: 10px;
+        .entete-inner {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .entete-inner td { vertical-align: middle; }
+        .entete-inner td.droite { text-align: right; }
+        .logo-text {
+            font-size: 24px;
             font-weight: bold;
-            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: white;
+        }
+        .sous-titre {
+            font-size: 11px;
+            margin-top: 3px;
+            color: white;
+        }
+        .reference {
+            font-size: 15px;
+            font-weight: bold;
+            color: white;
+        }
+        .date-gen {
+            font-size: 9px;
+            color: #93c5fd;
+            margin-top: 3px;
+        }
+        .badge-coffret {
+            background-color: #22c55e;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
 
         /* ── Corps ── */
-        .corps { padding: 24px 30px; }
+        .corps { padding: 16px 4px 0 4px; }
 
-        /* ── Section ── */
-        .section       { margin-bottom: 18px; }
+        /* ── Sections ── */
+        .section { margin-bottom: 14px; }
         .section-titre {
-            background: #e8f0fb;
+            background-color: #e8f0fb;
             border-left: 4px solid #1a3a6b;
-            padding: 6px 12px;
+            padding: 5px 10px;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #1a3a6b;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        /* ── Grille de champs ── */
-        .grille { width: 100%; border-collapse: collapse; }
+        /* ── Grille ── */
+        .grille {
+            width: 100%;
+            border-collapse: collapse;
+        }
         .grille td {
-            padding: 5px 10px;
+            padding: 5px 8px;
             border: 1px solid #e2e8f0;
             vertical-align: top;
         }
         .grille td.label {
             width: 22%;
             font-weight: bold;
-            background: #f8fafc;
+            background-color: #f8fafc;
             color: #475569;
         }
         .grille td.valeur { color: #0f172a; }
 
         /* ── En-têtes de tableau bleu ── */
         .th-bleu {
-            background: #1a3a6b;
+            background-color: #1a3a6b;
             color: white;
-            padding: 5px 10px;
+            padding: 5px 8px;
             font-weight: bold;
         }
 
         /* ── Observations ── */
         .observations {
-            background: #fefce8;
+            background-color: #fefce8;
             border: 1px solid #fde68a;
-            border-radius: 4px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             font-style: italic;
             color: #78350f;
-            font-size: 10px;
-        }
-
-        /* ── Pied de page fixe ── */
-        .pied {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            border-top: 2px solid #1a3a6b;
-            padding: 8px 30px;
             font-size: 9px;
-            color: #94a3b8;
-            text-align: center;
         }
 
-        .mt8  { margin-top: 8px; }
         .txt-center { text-align: center; }
         .txt-right  { text-align: right; }
         .txt-bold   { font-weight: bold; }
+        .mt8 { margin-top: 8px; }
     </style>
 </head>
 <body>
 
 {{-- ══════════════════════════════════════════
      EN-TÊTE BALS
+     Tableau HTML pour compatibilité mPDF (inline-block non fiable en PDF)
 ══════════════════════════════════════════ --}}
 <div class="entete">
-    <div class="entete-inner">
-        <div class="entete-gauche">
-            <div class="entete-nom">BALS</div>
-            <div class="entete-sous">
-                Demande de Devis &mdash; Coffret
-                <span style="text-transform:capitalize;">{{ str_replace('-', ' ', $devis->type_coffret) }}</span>
-            </div>
-        </div>
-        <div class="entete-droite">
-            <div class="reference">Réf. {{ $devis->reference }}</div>
-            <div class="date-gen">Généré le {{ $devis->created_at?->format('d/m/Y à H:i') ?? now()->format('d/m/Y à H:i') }}</div>
-            <div class="badge-type">{{ strtoupper($devis->type_coffret) }}</div>
-        </div>
-    </div>
+    <table class="entete-inner">
+        <tr>
+            <td>
+                <div class="logo-text">BALS</div>
+                <div class="sous-titre">
+                    Demande de Devis &mdash; Coffret
+                    <span style="text-transform:capitalize;">{{ str_replace('-', ' ', $devis->type_coffret) }}</span>
+                </div>
+            </td>
+            <td class="droite">
+                <div class="reference">Réf. {{ $devis->reference }}</div>
+                <div class="date-gen">Généré le {{ $devis->created_at?->format('d/m/Y à H:i') ?? now()->format('d/m/Y à H:i') }}</div>
+                <div style="margin-top:5px;">
+                    <span class="badge-coffret">{{ strtoupper($devis->type_coffret) }}</span>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 
 {{-- ══════════════════════════════════════════
@@ -212,7 +227,7 @@
             @if (!empty($d['quantite']))
             <tr>
                 <td class="label">Quantité</td>
-                <td class="valeur" colspan="3" class="txt-bold">{{ $d['quantite'] }}</td>
+                <td class="valeur txt-bold" colspan="3">{{ $d['quantite'] }}</td>
             </tr>
             @endif
         </table>
@@ -273,8 +288,8 @@
 
     {{-- ── Protections & Options ────────────────────────── --}}
     @php
-        $protTete   = $d['protections_tete']   ?? $d['protection_tete']   ?? null;
-        $protPrises = $d['protections_prises']  ?? $d['prot_prises']       ?? null;
+        $protTete   = $d['protections_tete']  ?? $d['protection_tete']  ?? null;
+        $protPrises = $d['protections_prises'] ?? $d['prot_prises']      ?? null;
         $options    = $d['options'] ?? null;
     @endphp
 
@@ -326,13 +341,6 @@
         </p>
     </div>
 
-</div>
-
-{{-- ══════════════════════════════════════════
-     PIED DE PAGE FIXE
-══════════════════════════════════════════ --}}
-<div class="pied">
-    <strong>BALS</strong> &middot; Demande de devis n° {{ $devis->reference }} &middot; {{ now()->format('Y') }}
 </div>
 
 </body>
